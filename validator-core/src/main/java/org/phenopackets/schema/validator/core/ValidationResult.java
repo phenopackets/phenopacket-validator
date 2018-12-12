@@ -3,6 +3,8 @@ package org.phenopackets.schema.validator.core;
 import java.util.Objects;
 
 /**
+ * Return value from a {@link Validator}.
+ *
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
  */
 public class ValidationResult {
