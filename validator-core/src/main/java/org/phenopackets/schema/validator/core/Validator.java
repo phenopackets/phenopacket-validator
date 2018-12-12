@@ -1,12 +1,12 @@
 package org.phenopackets.schema.validator.core;
 
-import org.phenopackets.schema.v1.PhenoPacket;
+import com.google.protobuf.Message;
 
 /**
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
  */
 @FunctionalInterface
-public interface Validator {
+public interface Validator<T extends Message> {
 
-    public void validate(PhenoPacket phenoPacket);
+    public ValidationResult validate(T message);
 }
