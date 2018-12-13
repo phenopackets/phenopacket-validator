@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.monarchinitiative.phenol.formats.hpo.HpoOntology;
+import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.phenopackets.schema.v1.PhenoPacket;
 
 import org.phenopackets.schema.v1.core.*;
@@ -13,6 +14,9 @@ import org.phenopackets.schema.validator.core.ValidationResult;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.when;
 
 /**
  * This class includes some convenience functions for making valid and invalid Phenopackets that we will use to
@@ -77,7 +81,20 @@ class HpoValidatorTest {
                 .addPhenotypes(reticulocytosis)
                 .build();
 
-        MetaData metaData = MetaData.newBuilder()
+        MetaData metaData = createValidMetadata();
+
+        return PhenoPacket.newBuilder()
+                .setSubject(proband)
+                .addAllVariants(ImmutableList.of(ANK1_variant))
+                .setMetaData(metaData)
+                .build();
+    }
+
+
+
+
+    private  MetaData createValidMetadata() {
+        return  MetaData.newBuilder()
                 .addResources(Resource.newBuilder()
                         .setId("hp")
                         .setName("human phenotype ontology")
@@ -104,14 +121,22 @@ class HpoValidatorTest {
                         .build())
                 .setCreatedBy("Example clinician")
                 .build();
+    }
 
-        return PhenoPacket.newBuilder()
-                .setSubject(proband)
-                .addAllVariants(ImmutableList.of(ANK1_variant))
-                .setMetaData(metaData)
+
+    Phenotype createValidSpherocytosisTerm() {
+        return Phenotype.newBuilder()
+                .setType(ontologyClass("HP:0004444", "Spherocytosis"))
+                .setClassOfOnset(ontologyClass("HP:0011463", "Childhood onset"))
                 .build();
     }
 
+
+
+
+    /** Every valid HPO Phenopacket needs to have a MetaData section. Here we construct a Phenopacket
+     * that does not have a MetaData section and show that it is invalid.
+     */
     @Test
     void testWhetherPhenopacketContainsMetadata() {
         Individual subject = Individual.newBuilder().build();
@@ -121,10 +146,55 @@ class HpoValidatorTest {
 
         HpoValidator validator = new HpoValidator(ontology);
         validator.validate(phenoPacket);
-        assertFalse(validator.isValid());
-        HpoValidator validator = new HpoValidator();
         ValidationResult result = validator.validate(phenoPacket);
         System.out.println(result);
         assertThat(result.isValid(), equalTo(false));
     }
+
+
+    /** Every valid HPO Phenopacket needs to have a subject. Here we construct a Phenopacket
+     * that does not have a subject and show that it is invalid.
+     */
+    @Test
+    void testWhetherPhenopacketHasSubject() {
+        MetaData metaData = createValidMetadata();
+        PhenoPacket phenoPacket = PhenoPacket.newBuilder()
+                .setMetaData(metaData)
+                .build();
+
+        HpoValidator validator = new HpoValidator(ontology);
+        validator.validate(phenoPacket);
+        ValidationResult result = validator.validate(phenoPacket);
+        System.out.println(result);
+        assertThat(result.isValid(), equalTo(false));
+    }
+
+
+
+//    @Test
+//    void testObsoleteHpoTerm() {
+//        when(ontology.getObsoleteTermIds().contains(anyObject())).thenReturn(true);
+//
+//        Phenotype spherocytosis = createValidSpherocytosisTerm();
+//        Individual subject = Individual.newBuilder().addPhenotypes(spherocytosis).build();
+//        MetaData metaData = createValidMetadata();
+//
+//        PhenoPacket phenoPacket = PhenoPacket.newBuilder()
+//                .setSubject(subject)
+//                .setMetaData(metaData)
+//                .build();
+//        HpoValidator validator = new HpoValidator(ontology);
+//        validator.validate(phenoPacket);
+//        ValidationResult result = validator.validate(phenoPacket);
+//        System.out.println(result);
+//        assertThat(result.isValid(), equalTo(false));
+//    }
+
+
+
+
+
+
+
+
 }
