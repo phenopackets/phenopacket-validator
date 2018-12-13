@@ -5,7 +5,7 @@ import org.monarchinitiative.phenol.formats.hpo.HpoOnset;
 import org.monarchinitiative.phenol.formats.hpo.HpoOntology;
 import org.phenopackets.schema.v1.PhenoPacket;
 import org.phenopackets.schema.v1.core.MetaData;
-import org.phenopackets.schema.validator.core.ErrorCode;
+import org.phenopackets.schema.validator.core.ValidationResult;
 import org.phenopackets.schema.validator.core.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,55 +18,43 @@ import java.util.List;
  *
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
  */
-public class HpoValidator implements Validator {
+public class HpoValidator implements Validator<PhenoPacket> {
 
     private static final Logger logger = LoggerFactory.getLogger(HpoValidator.class);
 
-    private PhenoPacket packet;
 
-    private boolean isValid;
-
-    private final HpoOntology ontology;
-
-    private final List<ErrorCode> errors;
-
-
-    public HpoValidator(HpoOntology ontology){
-        this.ontology=ontology;
-        errors=new ArrayList<>();
-        isValid=true;//valid until we find the first error
+    public HpoValidator() {
+//        this.ontology=ontology;
     }
 
 
     @Override
-    public void validate(PhenoPacket phenoPacket) {
-        this.packet=phenoPacket;
+    public ValidationResult validate(PhenoPacket phenoPacket) {
         logger.info("validating HPO terms in phenopacket...");
-        checkExistenceOfMetadata();
-    }
+        List<Validator<PhenoPacket>> validationChecks = new ArrayList<>();
+        validationChecks.add(checkExistenceOfMetadata());
 
-    public boolean isValid() {
-        return this.isValid;
-    }
-
-    public List<ErrorCode> getErrors() {
-        return ImmutableList.copyOf(errors);
-    }
-
-
-    private void checkExistenceOfMetadata() {
-        MetaData md=packet.getMetaData();
-        if  (! md.isInitialized()) {
-//        if (packet.getMetaData()==null ) {
-            errors.add(ErrorCode.LACKS_METADATA);
-            isValid = false;
-       } else {
-            System.out.println("MetaData=\""+md.toString()+"\"");
+        for (Validator<PhenoPacket> validationCheck : validationChecks) {
+            ValidationResult validationResult = validationCheck.validate(phenoPacket);
+            if (!validationResult.isValid()) {
+                return validationResult;
+            }
         }
+        return ValidationResult.pass();
     }
 
+    private Validator<PhenoPacket> checkExistenceOfMetadata() {
+        return phenoPacket -> {
+            MetaData md = phenoPacket.getMetaData();
+            if (md.equals(MetaData.getDefaultInstance())) {
+                return ValidationResult.fail("Metadata is empty");
+            }
+            return ValidationResult.pass();
+        };
+    }
 
-
-
+    private Validator<PhenoPacket> alwaysFail() {
+        return it -> ValidationResult.fail("Always fails");
+    }
 
 }

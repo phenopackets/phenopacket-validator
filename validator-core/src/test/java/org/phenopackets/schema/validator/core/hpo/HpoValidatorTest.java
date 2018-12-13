@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.monarchinitiative.phenol.formats.hpo.HpoOntology;
 import org.phenopackets.schema.v1.PhenoPacket;
+
 import org.phenopackets.schema.v1.core.*;
+import org.phenopackets.schema.validator.core.ValidationResult;
+
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -112,10 +115,16 @@ class HpoValidatorTest {
     @Test
     void testWhetherPhenopacketContainsMetadata() {
         Individual subject = Individual.newBuilder().build();
-        PhenoPacket phenoPacket = PhenoPacket.newBuilder().setSubject(subject).build();
+        PhenoPacket phenoPacket = PhenoPacket.newBuilder()
+                .setSubject(subject)
+                .build();
 
         HpoValidator validator = new HpoValidator(ontology);
         validator.validate(phenoPacket);
         assertFalse(validator.isValid());
+        HpoValidator validator = new HpoValidator();
+        ValidationResult result = validator.validate(phenoPacket);
+        System.out.println(result);
+        assertThat(result.isValid(), equalTo(false));
     }
 }
