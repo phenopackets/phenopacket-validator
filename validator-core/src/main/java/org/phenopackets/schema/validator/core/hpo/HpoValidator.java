@@ -46,7 +46,7 @@ public class HpoValidator implements Validator<PhenoPacket> {
         // Things like the MetaData validation ought to be general, yet the HPO-specific steps might be to check the
         // validity of individual curies and labels in the OntologyClasses with CURIEs with an HP prefix.
 
-        List<Validator<PhenoPacket>> validationChecks = new ArrayList<>();
+        List<ValidationResult> validationChecks = new ArrayList<>();
         validationChecks.add(checkMetadata());
         validationChecks.add(checkExistenceOfSubject());
         validationChecks.add(checkNonObsolesenceOfHpoTerms());
@@ -59,7 +59,7 @@ public class HpoValidator implements Validator<PhenoPacket> {
                 .collect(toList());
     }
 
-    private Validator<PhenoPacket> checkMetadata() {
+    private ValidationResult checkMetadata() {
         return phenoPacket -> {
             MetaData metaData = phenoPacket.getMetaData();
             ImmutableList.Builder<ValidationResult> validationResults = ImmutableList.builder();
