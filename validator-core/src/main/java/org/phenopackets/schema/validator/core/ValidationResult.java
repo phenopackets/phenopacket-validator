@@ -41,6 +41,10 @@ public class ValidationResult {
         return status == Status.PASS;
     }
 
+    public boolean notValid() {
+        return status == Status.FAIL;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
