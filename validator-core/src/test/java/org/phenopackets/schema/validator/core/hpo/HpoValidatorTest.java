@@ -1,204 +1,152 @@
 package org.phenopackets.schema.validator.core.hpo;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.monarchinitiative.phenol.formats.hpo.HpoOntology;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.phenopackets.schema.v1.PhenoPacket;
-
-import org.phenopackets.schema.v1.core.*;
+import org.phenopackets.schema.v1.core.Individual;
+import org.phenopackets.schema.v1.core.Phenotype;
+import org.phenopackets.schema.validator.core.TestExamples;
 import org.phenopackets.schema.validator.core.ValidationResult;
 
-
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.when;
-
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 
 /**
  * This class includes some convenience functions for making valid and invalid Phenopackets that we will use to
  * test the validation machinery.
+ *
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
  * @author Peter Robinson <peter.robinson@jax.org>
  */
+@ExtendWith(MockitoExtension.class)
 class HpoValidatorTest {
+
+
     @Mock
-    HpoOntology ontology;
+    private static Ontology ontology;
 
-    /** convenience function for creating an OntologyClass object. */
-    private static OntologyClass ontologyClass(String id, String label) {
-        return OntologyClass.newBuilder()
-                .setId(id)
-                .setLabel(label)
-                .build();
+    private HpoValidator validator;
+
+    @BeforeEach
+    void setUp() {
+        validator = new HpoValidator(ontology);
+    }
+
+    @Test
+    void nonObsoleteHpoTerm() {
+        when(ontology.getObsoleteTermIds()).thenReturn(Collections.emptySet());
+
+        Phenotype spherocytosis = TestExamples.spherocytosisWithChildhoodOnset();
+        Individual subject = Individual.newBuilder().addPhenotypes(spherocytosis).build();
+        PhenoPacket phenoPacket = PhenoPacket.newBuilder().setSubject(subject).build();
+
+        List<ValidationResult> results = validator.validate(phenoPacket);
+
+        assertThat(results, not(hasItem(ValidationResult.fail("Phenopacket has an obsolete term with id: HP:0004444"))));
     }
 
 
-    /** Example phenopacket -- we still need to develop this for testing.*/
+    @Test
+    void obsoleteHpoTermIsUsed() {
+        Set<TermId> obsoleteTermsMock = Sets.newHashSet(TermId.of("HP:0006876"), TermId.of("HP:0004444"));
+        when(ontology.getObsoleteTermIds()).thenReturn(obsoleteTermsMock);
 
-    public PhenoPacket spherocytosisExample() {
-        final String PROBAND_ID = "PROBAND#1";
-        final OntologyClass FEMALE = ontologyClass("PATO:0000383", "female");
-        Phenotype spherocytosis = Phenotype.newBuilder()
-                .setType(ontologyClass("HP:0004444", "Spherocytosis"))
-                .setClassOfOnset(ontologyClass("HP:0011463", "Childhood onset"))
-                .build();
-        Phenotype jaundice = Phenotype.newBuilder()
-                .setType(ontologyClass("HP:0000952", "Jaundice"))
-                .setClassOfOnset(ontologyClass("HP:0011463", "Childhood onset"))
-                .build();
-        Phenotype splenomegaly = Phenotype.newBuilder()
-                .setType(ontologyClass("HP:0001744", "Splenomegaly"))
-                .setClassOfOnset(ontologyClass("HP:0011463", "Childhood onset"))
-                .build();
-        Phenotype notHepatomegaly = Phenotype.newBuilder()
-                .setType(ontologyClass("HP:0002240", "Hepatomegaly"))
-                .setNegated(true)
-                .build();
-        Phenotype reticulocytosis = Phenotype.newBuilder()
-                .setType(ontologyClass("HP:0001923", "Reticulocytosis"))
-                .build();
-        Variant ANK1_variant = Variant.newBuilder()
-                .setSequence("NM_001142446.1")
-                .setPosition(5620)
-                .setDeletion("C")
-                .setInsertion("T")
-                .setHgvs("NM_001142446.1:c.5620C>T ")
-                .putSampleGenotypes(PROBAND_ID, ontologyClass("GENO:0000135", "heterozygous"))
-                .build();
-
-        Individual proband = Individual.newBuilder()
-                .setSex(FEMALE)
-                .setId(PROBAND_ID)
-                .setAgeAtCollection(Age.newBuilder().setAge("P27Y3M").build())
-                .addPhenotypes(spherocytosis)
-                .addPhenotypes(jaundice)
-                .addPhenotypes(splenomegaly)
-                .addPhenotypes(notHepatomegaly)
-                .addPhenotypes(reticulocytosis)
-                .build();
-
-        MetaData metaData = createValidMetadata();
-
-        return PhenoPacket.newBuilder()
-                .setSubject(proband)
-                .addAllVariants(ImmutableList.of(ANK1_variant))
-                .setMetaData(metaData)
-                .build();
-    }
-
-
-
-
-    private  MetaData createValidMetadata() {
-        return  MetaData.newBuilder()
-                .addResources(Resource.newBuilder()
-                        .setId("hp")
-                        .setName("human phenotype ontology")
-                        .setNamespacePrefix("HP")
-                        .setIriPrefix("http://purl.obolibrary.org/obo/HP_")
-                        .setUrl("http://purl.obolibrary.org/obo/hp.owl")
-                        .setVersion("2018-03-08")
+        Phenotype peripheralAxonalDegeneration = TestExamples.obsoletePeripheralAxonalDegenerationWithChildhoodOnset();
+        PhenoPacket phenoPacket = PhenoPacket.newBuilder()
+                .setSubject(Individual.newBuilder()
+                        .addPhenotypes(peripheralAxonalDegeneration)
                         .build())
-                .addResources(Resource.newBuilder()
-                        .setId("pato")
-                        .setName("Phenotype And Trait Ontology")
-                        .setNamespacePrefix("PATO")
-                        .setIriPrefix("http://purl.obolibrary.org/obo/PATO_")
-                        .setUrl("http://purl.obolibrary.org/obo/pato.owl")
-                        .setVersion("2018-03-28")
-                        .build())
-                .addResources(Resource.newBuilder()
-                        .setId("geno")
-                        .setName("Genotype Ontology")
-                        .setNamespacePrefix("GENO")
-                        .setIriPrefix("http://purl.obolibrary.org/obo/GENO_")
-                        .setUrl("http://purl.obolibrary.org/obo/geno.owl")
-                        .setVersion("19-03-2018")
-                        .build())
-                .setCreatedBy("Example clinician")
                 .build();
+
+        final List<ValidationResult> results = validator.validate(phenoPacket);
+
+        assertThat(results, hasItem(ValidationResult.fail("Phenopacket has an obsolete term with id: HP:0006876")));
     }
 
-
-    Phenotype createValidSpherocytosisTerm() {
-        return Phenotype.newBuilder()
-                .setType(ontologyClass("HP:0004444", "Spherocytosis"))
-                .setClassOfOnset(ontologyClass("HP:0011463", "Childhood onset"))
-                .build();
-    }
-
-
-
-
-    /** Every valid HPO Phenopacket needs to have a MetaData section. Here we construct a Phenopacket
-     * that does not have a MetaData section and show that it is invalid.
+    /**
+     *
      */
     @Test
-    void testWhetherPhenopacketContainsMetadata() {
-        Individual subject = Individual.newBuilder().build();
+    void phenopacketContainsTermAndItsAncestor() {
+        TermId spherocytosis = TermId.of("HP:0004444"); // term
+        TermId poikilocytosis = TermId.of("HP:0004447"); // ancestor
+        TermId hepatosplenomegaly = TermId.of("HP:0001433"); // not related term
+
+        Set<TermId> poikilocytosisAncestors = getAnemiaAndPoikilocytosisAncestors();
+        Set<TermId> spherocytosisAncestors = new HashSet<>(poikilocytosisAncestors);
+        spherocytosisAncestors.add(poikilocytosis);
+        Set<TermId> hepatosplenomegalyAncestors = getHepatosplenomegalyAncestors();
+
+        doReturn(poikilocytosisAncestors).when(ontology).getAncestorTermIds(poikilocytosis);
+        doReturn(spherocytosisAncestors).when(ontology).getAncestorTermIds(spherocytosis);
+        doReturn(hepatosplenomegalyAncestors).when(ontology).getAncestorTermIds(hepatosplenomegaly);
+
         PhenoPacket phenoPacket = PhenoPacket.newBuilder()
-                .setSubject(subject)
+                .setSubject(Individual.newBuilder()
+                        .addPhenotypes(TestExamples.spherocytosisWithChildhoodOnset())
+                        .addPhenotypes(TestExamples.poikilocytosisWithChildhoodOnset())
+                        .addPhenotypes(TestExamples.hepatosplenomegalyWithAdultOnset())
+                        .build())
                 .build();
 
-        HpoValidator validator = new HpoValidator(ontology);
-        validator.validate(phenoPacket);
-        List<ValidationResult> result = validator.validate(phenoPacket);
-        System.out.println(result);
-//        assertThat(result.isValid(), equalTo(false));
+        List<ValidationResult> results = validator.validate(phenoPacket);
+
+        assertThat(results, hasItem(ValidationResult.fail("PhenoPacket contains term as well as its ancestor - term: 'HP:0004444 - Spherocytosis', ancestor: 'HP:0004447 - Poikilocytosis'")));
     }
 
-
-    /** Every valid HPO Phenopacket needs to have a subject. Here we construct a Phenopacket
-     * that does not have a subject and show that it is invalid.
-     */
     @Test
-    void testWhetherPhenopacketHasSubject() {
-        MetaData metaData = createValidMetadata();
+    void phenopacketDoesNotContainAncestorOfTerms() {
+        TermId anemia = TermId.of("HP:0001903");
+        TermId poikilocytosis = TermId.of("HP:0004447");
+        TermId hepatosplenomegaly = TermId.of("HP:0001433");
+
+        Set<TermId> anemiaAndPoikilocytosisAncestors = getAnemiaAndPoikilocytosisAncestors();
+        Set<TermId> hepatosplenomegalyAncestors = getHepatosplenomegalyAncestors();
+
+        doReturn(anemiaAndPoikilocytosisAncestors).when(ontology).getAncestorTermIds(poikilocytosis);
+        doReturn(anemiaAndPoikilocytosisAncestors).when(ontology).getAncestorTermIds(anemia);
+        doReturn(hepatosplenomegalyAncestors).when(ontology).getAncestorTermIds(hepatosplenomegaly);
+
         PhenoPacket phenoPacket = PhenoPacket.newBuilder()
-                .setMetaData(metaData)
+                .setSubject(Individual.newBuilder()
+                        .addPhenotypes(TestExamples.anemiaWithChildhoodOnset())
+                        .addPhenotypes(TestExamples.poikilocytosisWithChildhoodOnset())
+                        .addPhenotypes(TestExamples.hepatosplenomegalyWithAdultOnset())
+                        .build())
                 .build();
 
-        HpoValidator validator = new HpoValidator(ontology);
-        validator.validate(phenoPacket);
-        List<ValidationResult> result = validator.validate(phenoPacket);
-        System.out.println(result);
-        //assertThat(result.isValid(), equalTo(false));
+        List<ValidationResult> results = validator.validate(phenoPacket);
+
+        assertTrue(results.isEmpty());
+    }
+
+    private Set<TermId> getAnemiaAndPoikilocytosisAncestors() {
+        return Sets.newHashSet(TermId.of("HP:0001877"), // Abnormal erythrocyte morphology
+                TermId.of("HP:0001871"), // Abnormality of blood and blood-forming tissues
+                TermId.of("HP:0000118")); // Phenotypic abnormality
     }
 
 
-
-//    @Test
-//    void testObsoleteHpoTerm() {
-//        when(ontology.getObsoleteTermIds().contains(anyObject())).thenReturn(true);
-//
-//        Phenotype spherocytosis = createValidSpherocytosisTerm();
-//        Individual subject = Individual.newBuilder().addPhenotypes(spherocytosis).build();
-//        MetaData metaData = createValidMetadata();
-//
-//        PhenoPacket phenoPacket = PhenoPacket.newBuilder()
-//                .setSubject(subject)
-//                .setMetaData(metaData)
-//                .build();
-//        HpoValidator validator = new HpoValidator(ontology);
-//        validator.validate(phenoPacket);
-//        ValidationResult result = validator.validate(phenoPacket);
-//        System.out.println(result);
-//        assertThat(result.isValid(), equalTo(false));
-//    }
-
-
-
-
-
-
-
-
+    private Set<TermId> getHepatosplenomegalyAncestors() {
+        return Sets.newHashSet(TermId.of("HP:0003271"), // Visceromegaly
+                TermId.of("HP:0001438"), // Abnormality of abdomen morphology
+                TermId.of("HP:0025031"), // Abnormality of the digestive system
+                TermId.of("HP:0000118")); // Phenotypic abnormality
+    }
 }

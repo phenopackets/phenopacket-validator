@@ -1,132 +1,103 @@
 package org.phenopackets.schema.validator.core.hpo;
 
-import com.google.common.collect.ImmutableList;
-
-import org.monarchinitiative.phenol.formats.hpo.HpoOntology;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.TermId;
-
 import org.phenopackets.schema.v1.PhenoPacket;
 import org.phenopackets.schema.v1.core.Individual;
-import org.phenopackets.schema.v1.core.MetaData;
 import org.phenopackets.schema.v1.core.OntologyClass;
 import org.phenopackets.schema.v1.core.Phenotype;
-import org.phenopackets.schema.v1.core.Resource;
 import org.phenopackets.schema.validator.core.ValidationResult;
 import org.phenopackets.schema.validator.core.Validator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import java.util.Set;
 
 /**
  * Class for validating HPO terms in a {@link org.phenopackets.schema.v1.PhenoPacket}.
+ * <p>
+ * Checks being performed here:
+ * <ul>
+ *     <li>check that phenopacket does not contain obsolete terms</li>
+ *     <li>check that phenopacket does not contain term as well as its ancestor</li>
+ * </ul>
  *
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
+ * @author Daniel Danis <daniel.danis@jax.org>
  */
 public class HpoValidator implements Validator<PhenoPacket> {
 
-    private static final Logger logger = LoggerFactory.getLogger(HpoValidator.class);
-
-    private final HpoOntology ontology;
+    private final Ontology ontology;
 
 
-    public HpoValidator(HpoOntology ont) {
-        this.ontology=ont;
+    public HpoValidator(Ontology ont) {
+        this.ontology = ont;
     }
 
 
     @Override
-    public List<ValidationResult> validate(PhenoPacket phenoPacket) {
-        logger.info("validating HPO terms in phenopacket...");
+    public List<ValidationResult> validate(PhenoPacket message) {
+        List<ValidationResult> results = new ArrayList<>();
 
-        // TODO: to what extent should this be HPO specific and where should a more general validation occur?
-        // Things like the MetaData validation ought to be general, yet the HPO-specific steps might be to check the
-        // validity of individual curies and labels in the OntologyClasses with CURIEs with an HP prefix.
+        results.addAll(checkNonObsolenceOfHpoTerms(message));
+        results.addAll(checkTermAncestorsInSubject(message));
 
-        List<ValidationResult> validationChecks = new ArrayList<>();
-        validationChecks.add(checkMetadata());
-        validationChecks.add(checkExistenceOfSubject());
-        validationChecks.add(checkNonObsolesenceOfHpoTerms());
-        validationChecks.add(alwaysFail());
-
-
-        return validationChecks.stream()
-                .flatMap(phenoPacketValidator -> phenoPacketValidator.validate(phenoPacket).stream())
-                .filter(ValidationResult::notValid)
-                .collect(toList());
+        return results;
     }
 
-    private ValidationResult checkMetadata() {
-        return phenoPacket -> {
-            MetaData metaData = phenoPacket.getMetaData();
-            ImmutableList.Builder<ValidationResult> validationResults = ImmutableList.builder();
 
-            validationResults.add(checkMetaDataNotEmpty(metaData));
-
-
-            // these atomic and independent checks might be well represented as an independent package of ValidationCheck<T>
-            // classes which can be simply tested and easily composed by other validators e.g. the checkMetaDataNotEmpty()
-            // but I think we need to do a bit more first to see what makes most sense.
-
-            for (Resource resource : metaData.getResourcesList()) {
-                // check fields are not blank or better check contents e.g.
-                // iriPrefix should follow a properly formed IRI pattern and end in a '_'
-                // namespacePrefix should be present and match the characters of iriPrefix.substring(((iriPrefix.length() - 2) - namespacePrefix.length()), iriPrefix.length() - 2)
-                // "namespacePrefix": "HP",
-                // "iriPrefix": "http://purl.obolibrary.org/obo/HP_"
-
-                // check each resource has at least one CURIE present in an OntologyClass, otherwise report '"Unused resource " + resource.getId()'
+    /**
+     * A phenopacket is not allowed to have obsolete terms
+     */
+    private List<ValidationResult> checkNonObsolenceOfHpoTerms(PhenoPacket phenoPacket) {
+        List<ValidationResult> results = new ArrayList<>();
+        Individual subject = phenoPacket.getSubject();
+        List<Phenotype> phenotypes = subject.getPhenotypesList();
+        for (Phenotype pt : phenotypes) {
+            OntologyClass term = pt.getType();
+            TermId tid = TermId.of(term.getId());
+            if (ontology.getObsoleteTermIds().contains(tid)) {
+                results.add(ValidationResult.fail("Phenopacket has an obsolete term with id: " + tid.getValue()));
             }
-            // check the reverse - i.e. all CURIEs in all OntologyClasses are represented by a Resource
-
-            return validationResults.build();
-        };
+        }
+        return results;
     }
 
 
-    /** A valid phenopacket must have a subject. */
-    private Validator<PhenoPacket> checkExistenceOfSubject() {
-        return phenoPacket -> {
-            Individual subject = phenoPacket.getSubject();
-            if (subject.equals(Individual.getDefaultInstance())) {
-                return ValidationResult.fail("Phenopacket does not have a subject");
-            }
-            return ValidationResult.pass();
-        };
-    }
+    /**
+     * A phenopacket is not allowed to contain phenotype terms together with their ancestors
+     */
+    private List<ValidationResult> checkTermAncestorsInSubject(PhenoPacket message) {
+        List<ValidationResult> results = new ArrayList<>();
 
-    /** A phenopacket is not allowed to have obsolete terms */
-    private Validator<PhenoPacket> checkNonObsolesenceOfHpoTerms() {
-        return phenoPacket -> {
-            Individual subject =  phenoPacket.getSubject();
-            List<Phenotype> phenotypes = subject.getPhenotypesList();
-            for (Phenotype pt : phenotypes) {
-                OntologyClass term =  pt.getType();
-                TermId tid = TermId.of(term.getId());
-                if (this.ontology.getObsoleteTermIds().contains(tid)) {
-                    return ValidationResult.fail("Phenopacket has an obsolete term with id: " + tid.getValue());
+        final List<Phenotype> phenotypesList = message.getSubject().getPhenotypesList();
+        for (Phenotype outer : phenotypesList) { // for each phenotype term
+            final TermId outerTid = TermId.of(outer.getType().getId());
+            // get all its ancestors
+            final Set<TermId> ancestorTermIds = ontology.getAncestorTermIds(outerTid);
+            // and check that any of the ancestors is not present as another term
+            for (Phenotype inner : phenotypesList) {
+                final TermId innerTid = TermId.of(inner.getType().getId());
+                if (ancestorTermIds.contains(innerTid)) {
+                    results.add(ValidationResult.fail(String.format("PhenoPacket contains term as well as its ancestor - term: '%s - %s', ancestor: '%s - %s'",
+                            outer.getType().getId(), outer.getType().getLabel(), // term
+                            inner.getType().getId(), inner.getType().getLabel()))); // ancestor
                 }
             }
-            return ValidationResult.pass();
-        };
+        }
+        return results;
     }
-
-
-
-
-
-
-    private ValidationResult checkMetaDataNotEmpty(MetaData metaData) {
-        return metaData.equals(MetaData.getDefaultInstance()) ? ValidationResult.fail("Metadata is empty") : ValidationResult
-                .pass();
-    }
-
-
-    private Validator<PhenoPacket> alwaysFail() {
-        return it -> ImmutableList.of(ValidationResult.fail("Always fails"));
-    }
-
 }
+
+////////////////////////////////////////// LEGACY ////////////////////////////////////////////
+//    @Override
+//    public List<ValidationResult> validate(PhenoPacket phenoPacket) {
+//        logger.info("validating HPO terms in phenopacket...");
+// TODO: to what extent should this be HPO specific and where should a more general validation occur?
+// Things like the MetaData validation ought to be general, yet the HPO-specific steps might be to check the
+// validity of individual curies and labels in the OntologyClasses with CURIEs with an HP prefix.
+//        return validationChecks.stream()
+//                .map(vc -> vc.validate(phenoPacket))
+//                .filter(ValidationResult::notValid)
+//                .collect(toList());
+//    }
