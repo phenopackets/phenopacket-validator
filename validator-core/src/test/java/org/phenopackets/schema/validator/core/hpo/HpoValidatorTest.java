@@ -37,7 +37,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class HpoValidatorTest {
 
-
     @Mock
     private static Ontology ontology;
 
@@ -53,8 +52,7 @@ class HpoValidatorTest {
         when(ontology.getObsoleteTermIds()).thenReturn(Collections.emptySet());
 
         Phenotype spherocytosis = TestExamples.spherocytosisWithChildhoodOnset();
-        Individual subject = Individual.newBuilder().addPhenotypes(spherocytosis).build();
-        PhenoPacket phenoPacket = PhenoPacket.newBuilder().setSubject(subject).build();
+        PhenoPacket phenoPacket = PhenoPacket.newBuilder().addPhenotypes(spherocytosis).build();
 
         List<ValidationResult> results = validator.validate(phenoPacket);
 
@@ -69,9 +67,7 @@ class HpoValidatorTest {
 
         Phenotype peripheralAxonalDegeneration = TestExamples.obsoletePeripheralAxonalDegenerationWithChildhoodOnset();
         PhenoPacket phenoPacket = PhenoPacket.newBuilder()
-                .setSubject(Individual.newBuilder()
-                        .addPhenotypes(peripheralAxonalDegeneration)
-                        .build())
+                .addPhenotypes(peripheralAxonalDegeneration)
                 .build();
 
         final List<ValidationResult> results = validator.validate(phenoPacket);
@@ -98,11 +94,9 @@ class HpoValidatorTest {
         doReturn(hepatosplenomegalyAncestors).when(ontology).getAncestorTermIds(hepatosplenomegaly);
 
         PhenoPacket phenoPacket = PhenoPacket.newBuilder()
-                .setSubject(Individual.newBuilder()
-                        .addPhenotypes(TestExamples.spherocytosisWithChildhoodOnset())
-                        .addPhenotypes(TestExamples.poikilocytosisWithChildhoodOnset())
-                        .addPhenotypes(TestExamples.hepatosplenomegalyWithAdultOnset())
-                        .build())
+                .addPhenotypes(TestExamples.spherocytosisWithChildhoodOnset())
+                .addPhenotypes(TestExamples.poikilocytosisWithChildhoodOnset())
+                .addPhenotypes(TestExamples.hepatosplenomegalyWithAdultOnset())
                 .build();
 
         List<ValidationResult> results = validator.validate(phenoPacket);
@@ -124,11 +118,9 @@ class HpoValidatorTest {
         doReturn(hepatosplenomegalyAncestors).when(ontology).getAncestorTermIds(hepatosplenomegaly);
 
         PhenoPacket phenoPacket = PhenoPacket.newBuilder()
-                .setSubject(Individual.newBuilder()
-                        .addPhenotypes(TestExamples.anemiaWithChildhoodOnset())
-                        .addPhenotypes(TestExamples.poikilocytosisWithChildhoodOnset())
-                        .addPhenotypes(TestExamples.hepatosplenomegalyWithAdultOnset())
-                        .build())
+                .addPhenotypes(TestExamples.anemiaWithChildhoodOnset())
+                .addPhenotypes(TestExamples.poikilocytosisWithChildhoodOnset())
+                .addPhenotypes(TestExamples.hepatosplenomegalyWithAdultOnset())
                 .build();
 
         List<ValidationResult> results = validator.validate(phenoPacket);

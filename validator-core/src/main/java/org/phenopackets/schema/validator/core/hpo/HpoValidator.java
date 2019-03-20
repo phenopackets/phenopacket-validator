@@ -3,7 +3,6 @@ package org.phenopackets.schema.validator.core.hpo;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.phenopackets.schema.v1.PhenoPacket;
-import org.phenopackets.schema.v1.core.Individual;
 import org.phenopackets.schema.v1.core.OntologyClass;
 import org.phenopackets.schema.v1.core.Phenotype;
 import org.phenopackets.schema.validator.core.ValidationResult;
@@ -18,8 +17,8 @@ import java.util.Set;
  * <p>
  * Checks being performed here:
  * <ul>
- *     <li>check that phenopacket does not contain obsolete terms</li>
- *     <li>check that phenopacket does not contain term as well as its ancestor</li>
+ * <li>check that phenopacket does not contain obsolete terms</li>
+ * <li>check that phenopacket does not contain term as well as its ancestor</li>
  * </ul>
  *
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
@@ -51,8 +50,7 @@ public class HpoValidator implements Validator<PhenoPacket> {
      */
     private List<ValidationResult> checkNonObsolenceOfHpoTerms(PhenoPacket phenoPacket) {
         List<ValidationResult> results = new ArrayList<>();
-        Individual subject = phenoPacket.getSubject();
-        List<Phenotype> phenotypes = subject.getPhenotypesList();
+        List<Phenotype> phenotypes = phenoPacket.getPhenotypesList();
         for (Phenotype pt : phenotypes) {
             OntologyClass term = pt.getType();
             TermId tid = TermId.of(term.getId());
@@ -70,7 +68,7 @@ public class HpoValidator implements Validator<PhenoPacket> {
     private List<ValidationResult> checkTermAncestorsInSubject(PhenoPacket message) {
         List<ValidationResult> results = new ArrayList<>();
 
-        final List<Phenotype> phenotypesList = message.getSubject().getPhenotypesList();
+        final List<Phenotype> phenotypesList = message.getPhenotypesList();
         for (Phenotype outer : phenotypesList) { // for each phenotype term
             final TermId outerTid = TermId.of(outer.getType().getId());
             // get all its ancestors
