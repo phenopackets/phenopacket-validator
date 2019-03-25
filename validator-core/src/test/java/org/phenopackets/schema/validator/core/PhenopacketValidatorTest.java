@@ -2,22 +2,22 @@ package org.phenopackets.schema.validator.core;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.phenopackets.schema.v1.PhenoPacket;
+import org.phenopackets.schema.v1.Phenopacket;
 
 import java.util.List;
 
-class PhenoPacketValidatorTest {
+class PhenopacketValidatorTest {
 
-    private PhenoPacketValidator validator;
+    private PhenopacketValidator validator;
 
     @BeforeEach
     void setUp() {
-        validator = new PhenoPacketValidator();
+        validator = new PhenopacketValidator();
     }
 
     @Test
     void subjectIsMissing() {
-        PhenoPacket phenoPacket = PhenoPacket.getDefaultInstance();
+        Phenopacket phenoPacket = Phenopacket.getDefaultInstance();
 
         final List<ValidationResult> results = validator.validate(phenoPacket);
         System.out.println(results);
@@ -29,7 +29,7 @@ class PhenoPacketValidatorTest {
      */
     @Test
     void testWhetherPhenopacketHasSubject() {
-        PhenoPacket phenoPacket = PhenoPacket.newBuilder().build();
+        Phenopacket phenoPacket = Phenopacket.newBuilder().build();
 
         validator.validate(phenoPacket);
         List<ValidationResult> result = validator.validate(phenoPacket);

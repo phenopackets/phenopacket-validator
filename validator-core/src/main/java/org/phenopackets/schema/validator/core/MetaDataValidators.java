@@ -1,18 +1,58 @@
 package org.phenopackets.schema.validator.core;
 
-import org.phenopackets.schema.v1.PhenoPacket;
 import org.phenopackets.schema.v1.core.MetaData;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaDataValidator implements Validator<PhenoPacket> {
+public class MetaDataValidators {
 
 
     /**
-     * @return
+     * Check that {@link MetaData} is not not empty.
      */
-    private ValidationCheck<MetaData> checkMetaData() {
+    public static Validator<MetaData> checkMetaDataNotEmpty() {
+        return md -> {
+            List<ValidationResult> results = new ArrayList<>();
+            if (md.equals(MetaData.getDefaultInstance())) {
+                results.add(ValidationResult.fail("Metadata is empty"));
+            }
+
+            return results;
+        };
+    }
+
+    /**
+     * Check that {@link MetaData} does not contain uninitialized resource
+     */
+    public static Validator<MetaData> checkMetaDataHasNoEmptyResource() {
+        return md -> {
+            List<ValidationResult> results = new ArrayList<>(1);
+            md.getResourcesList().stream()
+                    .map(ResourceValidators.checkResourceIsNotEmpty()::validate)
+                    .filter(ValidationResult::notValid)
+                    .forEach(results::add);
+            return results;
+        };
+    }
+
+    /**
+     * Check field describing contributor / program that created the PhenoPacket is not empty.
+     */
+    public static Validator<MetaData> checkCreatedByIsNotEmpty() {
+        return md -> {
+            List<ValidationResult> results = new ArrayList<>(1);
+            if (md.getCreatedBy() == null || md.getCreatedBy().isEmpty()) {
+                results.add(ValidationResult.fail("Missing author information (field created_by)"));
+            }
+            return results;
+        };
+    }
+
+    /**
+     *
+     */
+    ValidationCheck<MetaData> checkMetaData() {
         return metadata -> {
             /*
             MetaData metaData = phenoPacket.getMetaData();
@@ -42,18 +82,4 @@ public class MetaDataValidator implements Validator<PhenoPacket> {
         };
     }
 
-    private List<ValidationResult> checkMetaDataNotEmpty(PhenoPacket phenoPacket) {
-        List<ValidationResult> results = new ArrayList<>();
-
-        if (phenoPacket.getMetaData().equals(MetaData.getDefaultInstance())) {
-            results.add(ValidationResult.fail("Metadata is empty"));
-        }
-
-        return results;
-    }
-
-    @Override
-    public List<ValidationResult> validate(PhenoPacket message) {
-        return null;
-    }
 }
