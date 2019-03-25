@@ -15,7 +15,32 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Requirements for {@link Resource}:
+ *
+ * <ul>
+ * <li>resource is not empty</li>
+ * <li>URL is properly formatted</li>
+ * <li><code>namespace_prefix</code> corresponds with <code>iri_prefix</code>
+ * (e.g. if <code>namespace_prefix=HP</code>, then <code>iri_prefix=http://purl.obolibrary.org/obo/HP_</code></li>
+ * <li><code>version</code> is not empty</li>
+ * </ul>
+ * <p>
+ * Check on {@link Phenopacket} level:
+ * <ul>
+ * <li>all {@link Resource}s defined in {@link org.phenopackets.schema.v1.core.MetaData} are used at least by one
+ * {@link OntologyClass} instance</li>
+ * <li>there is no undefined {@link Resource} present for used {@link OntologyClass} bits</li>
+ * </ul>
+ *
+ * @author Daniel Danis <daniel.danis@jax.org>
+ */
 public class ResourceValidators {
+
+    /**
+     * E.g. http://purl.obolibrary.org/obo/GENO_
+     */
+    static final Pattern IRI_PREFIX = Pattern.compile("http://[\\w+./]+/([a-zA-Z]+)_");
 
     private static final Pattern TERM_ID = Pattern.compile("(\\w+):(\\d+)");
 
@@ -27,14 +52,6 @@ public class ResourceValidators {
         return r -> r.equals(Resource.getDefaultInstance())
                 ? ValidationResult.fail("Resource is empty")
                 : ValidationResult.pass();
-    }
-
-    public static ValidationCheck<Resource> checkIriPrefix() {
-        return r -> {
-            String iriPrefix = r.getIriPrefix();
-
-            return null;
-        };
     }
 
     public static ValidationCheck<Resource> checkUrlSyntax() {
@@ -100,17 +117,43 @@ public class ResourceValidators {
 
             return results;
         };
-
     }
 
-    public static ValidationCheck<Resource> checkUrlMatchesPurl() {
+
+    public static ValidationCheck<Resource> checkNamespacePrefixForOboResource() {
         return r -> {
-            String iriPrefix = r.getIriPrefix();
-            String namespacePrefix = r.getNamespacePrefix();
-            String ss = iriPrefix.substring(((iriPrefix.length() - 2) - namespacePrefix.length()), iriPrefix.length() - 2);
-            System.out.println(ss);
-            return null;
+            String np = r.getNamespacePrefix();
+            String ip = r.getIriPrefix();
+            Matcher iriMatcher = IRI_PREFIX.matcher(ip);
+            if (iriMatcher.matches()) {
+                // This will be 'GENO' for ip = 'http://purl.obolibrary.org/obo/GENO_'
+                String iriPrefix = iriMatcher.group(1);
+                if (!np.equals(iriPrefix)) {
+                    return ValidationResult.fail(String.format("Namespace prefix '%s' does not match '%s' present in IRI prefix '%s'",
+                            np, iriPrefix, ip));
+                } else {
+                    return ValidationResult.pass();
+                }
+            }
+
+            return checkIriPrefixIsWellFormattedForOboResource().validate(r);
         };
+    }
+
+    /**
+     * Check that IRI prefix is formatted as required.
+     */
+    public static ValidationCheck<Resource> checkIriPrefixIsWellFormattedForOboResource() {
+        return r -> IRI_PREFIX.matcher(r.getIriPrefix()).matches()
+                ? ValidationResult.pass()
+                : ValidationResult.fail(String.format("IRI prefix '%s' does not match pattern '%s'", r.getIriPrefix(), IRI_PREFIX.pattern()));
+    }
+
+
+    public static ValidationCheck<Resource> checkVersionIsNotEmpty() {
+        return r -> r.getVersion().isEmpty()
+                ? ValidationResult.fail(String.format("Version information is missing from resource '%s'", r.getName()))
+                : ValidationResult.pass();
     }
 
     private static String getIdPrefix(OntologyClass oc) {
@@ -120,5 +163,15 @@ public class ResourceValidators {
         }
         return null;
     }
+
+//    public static ValidationCheck<Resource> checkUrlMatchesPurl() {
+//        return r -> {
+//            String iriPrefix = r.getIriPrefix();
+//            String namespacePrefix = r.getNamespacePrefix();
+//            String ss = iriPrefix.substring(((iriPrefix.length() - 2) - namespacePrefix.length()), iriPrefix.length() - 2);
+//            System.out.println(ss);
+//            return null;
+//        };
+//    }
 
 }

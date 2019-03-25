@@ -8,6 +8,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+/**
+ *
+ * @author Daniel Danis <daniel.danis@jax.org>
+ */
 public class MessageUtils {
 
     /**

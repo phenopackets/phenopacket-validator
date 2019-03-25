@@ -13,6 +13,10 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.phenopackets.schema.validator.core.TestExamples.*;
 
+/**
+ *
+ * @author Daniel Danis <daniel.danis@jax.org>
+ */
 class MessageUtilsTest {
 
     @Test

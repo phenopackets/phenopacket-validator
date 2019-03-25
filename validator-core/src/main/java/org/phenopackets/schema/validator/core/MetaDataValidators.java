@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
  * <li><code>submitted_by</code> is not empty</li>
  * <li>{@link MetaData} does not contain uninitialized {@link Resource}</li>
  * </ul>
+ *
+ * @author Daniel Danis <daniel.danis@jax.org>
  */
 public class MetaDataValidators {
 

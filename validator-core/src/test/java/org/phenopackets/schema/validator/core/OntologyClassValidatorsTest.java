@@ -6,6 +6,10 @@ import org.phenopackets.schema.v1.core.OntologyClass;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+/**
+ *
+ * @author Daniel Danis <daniel.danis@jax.org>
+ */
 class OntologyClassValidatorsTest {
 
 
