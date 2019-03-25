@@ -2,7 +2,7 @@ package org.phenopackets.schema.validator.core.hpo;
 
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.TermId;
-import org.phenopackets.schema.v1.PhenoPacket;
+import org.phenopackets.schema.v1.Phenopacket;
 import org.phenopackets.schema.v1.core.OntologyClass;
 import org.phenopackets.schema.v1.core.Phenotype;
 import org.phenopackets.schema.validator.core.ValidationResult;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Class for validating HPO terms in a {@link org.phenopackets.schema.v1.PhenoPacket}.
+ * Class for validating HPO terms in a {@link org.phenopackets.schema.v1.Phenopacket}.
  * <p>
  * Checks being performed here:
  * <ul>
@@ -24,7 +24,7 @@ import java.util.Set;
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
  * @author Daniel Danis <daniel.danis@jax.org>
  */
-public class HpoValidator implements Validator<PhenoPacket> {
+public class HpoValidator implements Validator<Phenopacket> {
 
     private final Ontology ontology;
 
@@ -35,7 +35,7 @@ public class HpoValidator implements Validator<PhenoPacket> {
 
 
     @Override
-    public List<ValidationResult> validate(PhenoPacket message) {
+    public List<ValidationResult> validate(Phenopacket message) {
         List<ValidationResult> results = new ArrayList<>();
 
         results.addAll(checkNonObsolenceOfHpoTerms(message));
@@ -48,7 +48,7 @@ public class HpoValidator implements Validator<PhenoPacket> {
     /**
      * A phenopacket is not allowed to have obsolete terms
      */
-    private List<ValidationResult> checkNonObsolenceOfHpoTerms(PhenoPacket phenoPacket) {
+    private List<ValidationResult> checkNonObsolenceOfHpoTerms(Phenopacket phenoPacket) {
         List<ValidationResult> results = new ArrayList<>();
         List<Phenotype> phenotypes = phenoPacket.getPhenotypesList();
         for (Phenotype pt : phenotypes) {
@@ -65,7 +65,7 @@ public class HpoValidator implements Validator<PhenoPacket> {
     /**
      * A phenopacket is not allowed to contain phenotype terms together with their ancestors
      */
-    private List<ValidationResult> checkTermAncestorsInSubject(PhenoPacket message) {
+    private List<ValidationResult> checkTermAncestorsInSubject(Phenopacket message) {
         List<ValidationResult> results = new ArrayList<>();
 
         final List<Phenotype> phenotypesList = message.getPhenotypesList();
