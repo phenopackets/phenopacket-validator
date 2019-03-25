@@ -27,7 +27,8 @@ public class MessageUtils {
         String canonicalName = type.getCanonicalName();
 
         message.getAllFields().forEach((fieldDescriptor, field) -> {
-            // As written in Javadoc, this method doesn't allow to search for "primitives", as int32, string, enums. Only message objects
+            // As written in Javadoc, this method doesn't allow to search for "primitives", as int32, string, enums.
+            // Only message objects are considered.
             if (fieldDescriptor.getJavaType() == Descriptors.FieldDescriptor.JavaType.MESSAGE) {
                 // This might be 'org.phenopackets.schema.v1.core.Individual'
                 String fullName = fieldDescriptor.getMessageType().getFullName();
@@ -40,25 +41,22 @@ public class MessageUtils {
                     } else {
                         // we checked for type equality above
                         @SuppressWarnings("unchecked")
-                        T instance = (T) field;
-                        resultBuilder.add(instance);
-                        // same as above
-                        @SuppressWarnings("unchecked")
-                        U kd = (U) field;
-                        resultBuilder.addAll(getEmbeddedMessageFieldsOfType(kd, type));
+                        T single = (T) field;
+                        resultBuilder.add(single);
                     }
                 }
 
                 // descend recursively
                 if (isRepeated) {
-                    @SuppressWarnings("unchecked") // must be message, checked above
-                            Collection<Message> repeated = ((Collection<Message>) field);
+                    // must be a collection of messages, checked above
+                    @SuppressWarnings("unchecked")
+                    Iterable<Message> repeated = ((Iterable<Message>) field);
                     for (Message m : repeated) {
                         resultBuilder.addAll(getEmbeddedMessageFieldsOfType(m, type));
                     }
                 } else {
-                    Message instance = (Message) field;
-                    resultBuilder.addAll(getEmbeddedMessageFieldsOfType(instance, type));
+                    Message single = (Message) field;
+                    resultBuilder.addAll(getEmbeddedMessageFieldsOfType(single, type));
                 }
             }
         });

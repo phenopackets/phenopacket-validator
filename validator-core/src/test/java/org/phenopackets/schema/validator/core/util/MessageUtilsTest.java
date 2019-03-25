@@ -11,8 +11,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.phenopackets.schema.validator.core.TestExamples.CHILDHOOD_ONSET;
-import static org.phenopackets.schema.validator.core.TestExamples.ontologyClass;
+import static org.phenopackets.schema.validator.core.TestExamples.*;
 
 class MessageUtilsTest {
 
@@ -57,6 +56,6 @@ class MessageUtilsTest {
 
         assertThat(ocs.size(), is(4));
         assertThat(ocs, hasItems(ontologyClass("HP:0004444", "Spherocytosis"), CHILDHOOD_ONSET,
-                ontologyClass("HP:0001433", "Hepatosplenomegaly"), TestExamples.ADULT_ONSET));
+                ontologyClass("HP:0001433", "Hepatosplenomegaly"), ADULT_ONSET));
     }
 }
