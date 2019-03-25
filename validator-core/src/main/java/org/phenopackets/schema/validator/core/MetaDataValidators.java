@@ -1,26 +1,60 @@
 package org.phenopackets.schema.validator.core;
 
+import com.google.protobuf.Timestamp;
 import org.phenopackets.schema.v1.core.MetaData;
+import org.phenopackets.schema.v1.core.Resource;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
+
+/**
+ * Provide validators and validation checks for attributes of {@link MetaData}:
+ * <ul>
+ * <li>{@link MetaData} is not empty</li>
+ * <li><code>created</code> {@link com.google.protobuf.Timestamp} is present</li>
+ * <li><code>created_by</code> is not empty</li>
+ * <li><code>submitted_by</code> is not empty</li>
+ * <li>{@link MetaData} does not contain uninitialized {@link Resource}</li>
+ * </ul>
+ */
 public class MetaDataValidators {
 
+
+    private MetaDataValidators() {
+        // private no-op
+    }
 
     /**
      * Check that {@link MetaData} is not not empty.
      */
-    public static Validator<MetaData> checkMetaDataNotEmpty() {
-        return md -> {
-            List<ValidationResult> results = new ArrayList<>();
-            if (md.equals(MetaData.getDefaultInstance())) {
-                results.add(ValidationResult.fail("Metadata is empty"));
-            }
+    public static ValidationCheck<MetaData> checkMetaDataNotEmpty() {
+        return md -> md.equals(MetaData.getDefaultInstance())
+                ? ValidationResult.fail("Metadata is empty")
+                : ValidationResult.pass();
+    }
 
-            return results;
-        };
+    public static ValidationCheck<MetaData> checkCreatedIsNotEmpty() {
+        return md -> md.getCreated().equals(Timestamp.getDefaultInstance())
+                ? ValidationResult.fail("Missing timestamp for when this phenopacket was created (field 'created')")
+                : ValidationResult.pass();
+    }
+
+    /**
+     * Check field describing contributor / program that created the Phenopacket is not empty.
+     */
+    public static ValidationCheck<MetaData> checkCreatedByIsNotEmpty() {
+        return md -> md.getCreatedBy().isEmpty()
+                ? ValidationResult.fail("Missing author information (field 'created_by')")
+                : ValidationResult.pass();
+    }
+
+    /**
+     * Check field describing Phenopacket submitter is not empty.
+     */
+    public static ValidationCheck<MetaData> checkSubmittedByIsNotEmpty() {
+        return md -> md.getSubmittedBy().isEmpty()
+                ? ValidationResult.fail("Missing information about the person/organisation/network that has submitted the phenopacket (field 'submitted_by')")
+                : ValidationResult.pass();
     }
 
     /**
@@ -33,24 +67,8 @@ public class MetaDataValidators {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Check field describing contributor / program that created the PhenoPacket is not empty.
-     */
-    public static Validator<MetaData> checkCreatedByIsNotEmpty() {
-        return md -> {
-            List<ValidationResult> results = new ArrayList<>(1);
-            if (md.getCreatedBy() == null || md.getCreatedBy().isEmpty()) {
-                results.add(ValidationResult.fail("Missing author information (field created_by)"));
-            }
-            return results;
-        };
-    }
-
-    /**
-     *
-     */
-    ValidationCheck<MetaData> checkMetaData() {
-        return metadata -> {
+//    ValidationCheck<MetaData> checkMetaData() {
+//        return metadata -> {
             /*
             MetaData metaData = phenoPacket.getMetaData();
             ImmutableList.Builder<ValidationResult> validationResults = ImmutableList.builder();
@@ -75,8 +93,8 @@ public class MetaDataValidators {
 
             return validationResults.build();
             */
-            return ValidationResult.fail("Check metadata is always failing for now");
-        };
-    }
+//            return ValidationResult.fail("Check metadata is always failing for now");
+//        };
+//    }
 
 }

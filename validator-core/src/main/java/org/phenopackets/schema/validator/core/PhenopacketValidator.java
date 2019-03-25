@@ -19,12 +19,9 @@ import java.util.List;
  */
 public class PhenopacketValidator implements Validator<Phenopacket> {
 
-    private final MetaDataValidators metaDataValidator;
-
 //    private final OntologyResolver ontologyResolver;
 
     public PhenopacketValidator() {
-        metaDataValidator = new MetaDataValidators();
 //        ontologyResolver = new OntologyResolver(resourceDir);
     }
 
