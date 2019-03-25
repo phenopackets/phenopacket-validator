@@ -4,6 +4,7 @@ import org.phenopackets.schema.v1.core.MetaData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MetaDataValidators {
 
@@ -26,14 +27,10 @@ public class MetaDataValidators {
      * Check that {@link MetaData} does not contain uninitialized resource
      */
     public static Validator<MetaData> checkMetaDataHasNoEmptyResource() {
-        return md -> {
-            List<ValidationResult> results = new ArrayList<>(1);
-            md.getResourcesList().stream()
-                    .map(ResourceValidators.checkResourceIsNotEmpty()::validate)
-                    .filter(ValidationResult::notValid)
-                    .forEach(results::add);
-            return results;
-        };
+        return md -> md.getResourcesList().stream()
+                .map(ResourceValidators.checkResourceIsNotEmpty()::validate)
+                .filter(ValidationResult::notValid)
+                .collect(Collectors.toList());
     }
 
     /**
