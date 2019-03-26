@@ -50,12 +50,12 @@ class IndividualValidatorsTest {
         assertThat(result, is(ValidationResult.fail("Individual must not be empty")));
     }
 
-    // ------------------------ checkId -------------------------------------
+    // ------------------------ checkIdIsNotEmpty -------------------------------------
 
     @Test
     void passWhenIndividualHasId() {
         Individual johnny = TestExamples.getIndividualJohnny();
-        ValidationResult result = IndividualValidators.checkId().validate(johnny);
+        ValidationResult result = IndividualValidators.checkIdIsNotEmpty().validate(johnny);
 
         assertThat(result, is(ValidationResult.pass()));
     }
@@ -63,7 +63,7 @@ class IndividualValidatorsTest {
     @Test
     void failWhenIndividualDoesNotHaveId() {
         Individual i = Individual.getDefaultInstance();
-        ValidationResult result = IndividualValidators.checkId().validate(i);
+        ValidationResult result = IndividualValidators.checkIdIsNotEmpty().validate(i);
 
         assertThat(result, is(ValidationResult.fail("Individual must have an id")));
     }
@@ -125,5 +125,23 @@ class IndividualValidatorsTest {
         List<ValidationResult> results = IndividualValidators.checkThatSubjectIdCorrespondsToBiosampleIndividualIds().validate(pp);
 
         assertThat(results.isEmpty(), is(true));
+    }
+
+    // ------------------------ checkThatSubjectIdCorrespondsToBiosampleIndividualIds -------------------------------------
+
+    @Test
+    void passWhenTaxonomyIsPresent() {
+        Phenopacket pp = TestExamples.getJohnnyPhenopacket();
+        ValidationResult result = IndividualValidators.checkTaxonomyIsNotEmpty().validate(pp.getSubject());
+
+        assertThat(result, is(ValidationResult.pass()));
+    }
+
+    @Test
+    void failWhenTaxonomyIsMissing() {
+        Individual i = Individual.getDefaultInstance();
+        ValidationResult result = IndividualValidators.checkTaxonomyIsNotEmpty().validate(i);
+
+        assertThat(result, is(ValidationResult.fail("Individual's taxonomy info must be present")));
     }
 }
