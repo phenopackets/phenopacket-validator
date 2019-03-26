@@ -19,12 +19,11 @@ class RareDiseasePhenopacketValidatorTest {
     }
 
     @Test
-    void failOnEverything() {
+    void failuresOnEmptyPhenopacket() {
         Phenopacket pp = Phenopacket.getDefaultInstance();
 
         List<ValidationResult> results = instance.validate(pp);
 
-        results.forEach(System.err::println);
         assertThat(results.size(), is(4));
         assertThat(results, hasItems(
                 ValidationResult.fail("Subject must not be empty"),
@@ -32,5 +31,14 @@ class RareDiseasePhenopacketValidatorTest {
                 ValidationResult.fail("Individual's taxonomy info must be present"),
                 ValidationResult.fail("Metadata is empty")
         ));
+    }
+
+    @Test
+    void passWithValidPhenopacket() {
+        Phenopacket pp = TestExamples.getJohnnyPhenopacket();
+
+        List<ValidationResult> results = instance.validate(pp);
+
+        assertThat(results.isEmpty(), is(true));
     }
 }

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class RareDiseasePhenopacketValidator implements Validator<Phenopacket> {
 
     /**
-     * Phenopacket created to represent proband in rare disease context must comply with following rules:
+     * Phenopacket created to represent <em>proband</em> in rare disease context must comply with following rules:
      * <ul>
      * <li><b>subject</b></li>
      * <ul>
@@ -21,12 +21,16 @@ public class RareDiseasePhenopacketValidator implements Validator<Phenopacket> {
      * <li>age string must be well formatted if present</li>
      * </ul>
      *
-     * <li>at least single variant must be present</li>
-     *
      * <li><b>metadata</b></li>
      * <ul>
      * <li>{@link MetaData} must not be empty</li>
      * <li>{@link MetaData} must not contain an empty {@link Resource}</li>
+     * <li><b>resources</b>
+     * <ul>
+     * <li>there are no <em>unused</em> {@link Resource}s in the {@link MetaData}</li>
+     * <li>there are no <em>undefined</em> {@link Resource}s in the {@link MetaData}</li>
+     * </ul>
+     * </li>
      * </ul>
      * </ul>
      *
@@ -48,6 +52,10 @@ public class RareDiseasePhenopacketValidator implements Validator<Phenopacket> {
         // metadata must not be empty and must not contain an empty resource
         results.add(MetaDataValidators.checkMetaDataNotEmpty().validate(pp.getMetaData()));
         results.addAll(MetaDataValidators.checkMetaDataHasNoEmptyResource().validate(pp.getMetaData()));
+        // there are no unused resources
+        results.addAll(ResourceValidators.checkUnusedResources().validate(pp));
+        // there are no undefined resources
+        results.addAll(ResourceValidators.checkUndefinedResorces().validate(pp));
 
         // only return failures
         return results.stream()
