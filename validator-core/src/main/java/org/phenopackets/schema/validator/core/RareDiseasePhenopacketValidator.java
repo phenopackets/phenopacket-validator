@@ -11,27 +11,28 @@ import java.util.stream.Collectors;
 public class RareDiseasePhenopacketValidator implements Validator<Phenopacket> {
 
     /**
-     * Phenopacket created to represent <em>proband</em> in rare disease context must comply with following rules:
+     * Phenopacket created to represent <em>proband</em> in rare disease context must comply with the following rules:
      * <ul>
-     * <li><b>subject</b></li>
+     * <li><b>Subject</b>
      * <ul>
      * <li>must be present</li>
      * <li>must have id</li>
      * <li>taxonomy must be defined</li>
      * <li>age string must be well formatted if present</li>
-     * </ul>
+     * </ul></li>
      *
-     * <li><b>metadata</b></li>
+     * <li><b>Metadata</b>
      * <ul>
      * <li>{@link MetaData} must not be empty</li>
      * <li>{@link MetaData} must not contain an empty {@link Resource}</li>
-     * <li><b>resources</b>
+     * <li><b>Resources</b>
      * <ul>
      * <li>there are no <em>unused</em> {@link Resource}s in the {@link MetaData}</li>
      * <li>there are no <em>undefined</em> {@link Resource}s in the {@link MetaData}</li>
      * </ul>
      * </li>
      * </ul>
+     * </li>
      * </ul>
      *
      * @param pp {@link Phenopacket} to be validated
