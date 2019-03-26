@@ -6,6 +6,7 @@ import org.phenopackets.schema.v1.Phenopacket;
 
 import java.util.List;
 
+@Deprecated
 class PhenopacketValidatorTest {
 
     private PhenopacketValidator validator;
@@ -20,7 +21,7 @@ class PhenopacketValidatorTest {
         Phenopacket phenoPacket = Phenopacket.getDefaultInstance();
 
         final List<ValidationResult> results = validator.validate(phenoPacket);
-        System.out.println(results);
+//        System.out.println(results);
     }
 
     /**
@@ -33,7 +34,7 @@ class PhenopacketValidatorTest {
 
         validator.validate(phenoPacket);
         List<ValidationResult> result = validator.validate(phenoPacket);
-        System.out.println(result);
+//        System.out.println(result);
         //assertThat(result.isValid(), equalTo(false));
     }
 }

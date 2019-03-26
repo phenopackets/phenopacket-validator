@@ -1,9 +1,7 @@
 package org.phenopackets.schema.validator.core;
 
 import org.phenopackets.schema.v1.Phenopacket;
-import org.phenopackets.schema.v1.core.Biosample;
-import org.phenopackets.schema.v1.core.Individual;
-import org.phenopackets.schema.v1.core.OntologyClass;
+import org.phenopackets.schema.v1.core.*;
 
 import java.util.stream.Collectors;
 
@@ -62,6 +60,27 @@ public class IndividualValidators {
         return i -> i.getTaxonomy().equals(OntologyClass.getDefaultInstance())
                 ? ValidationResult.fail("Individual's taxonomy info must be present")
                 : ValidationResult.pass();
+    }
+
+    public static ValidationCheck<Individual> checkAgeIfPresent() {
+        return i -> {
+            switch (i.getAgeCase()) {
+                case AGE_AT_COLLECTION:
+                    Age ageAtCollection = i.getAgeAtCollection();
+                    return AgeValidators.ageStringIsWellFormatted().validate(ageAtCollection);
+                case AGE_RANGE_AT_COLLECTION:
+                    AgeRange ageRangeAtCollection = i.getAgeRangeAtCollection();
+                    Age start = ageRangeAtCollection.getStart();
+                    Age end = ageRangeAtCollection.getEnd();
+                    ValidationResult startResult = AgeValidators.ageStringIsWellFormatted().validate(start);
+                    return startResult.isValid()
+                            ? AgeValidators.ageStringIsWellFormatted().validate(end)
+                            : startResult;
+                case AGE_NOT_SET:
+                default:
+                    return ValidationResult.pass();
+            }
+        };
     }
 
     /**

@@ -17,6 +17,7 @@ import java.util.List;
  * <li>subject is present</li>
  * </ul>
  */
+@Deprecated // in favor of RareDiseasePhenopacketValidator
 public class PhenopacketValidator implements Validator<Phenopacket> {
 
 //    private final OntologyResolver ontologyResolver;

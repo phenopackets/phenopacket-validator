@@ -2,6 +2,8 @@ package org.phenopackets.schema.validator.core;
 
 import org.junit.jupiter.api.Test;
 import org.phenopackets.schema.v1.Phenopacket;
+import org.phenopackets.schema.v1.core.Age;
+import org.phenopackets.schema.v1.core.AgeRange;
 import org.phenopackets.schema.v1.core.Biosample;
 import org.phenopackets.schema.v1.core.Individual;
 
@@ -143,5 +145,57 @@ class IndividualValidatorsTest {
         ValidationResult result = IndividualValidators.checkTaxonomyIsNotEmpty().validate(i);
 
         assertThat(result, is(ValidationResult.fail("Individual's taxonomy info must be present")));
+    }
+
+
+    // ------------------------ checkAgeIfPresent -------------------------------------
+
+    @Test
+    void passWhenAgeIsNotPresent() {
+        Individual i = Individual.getDefaultInstance();
+        ValidationResult result = IndividualValidators.checkAgeIfPresent().validate(i);
+
+        assertThat(result, is(ValidationResult.pass()));
+    }
+
+    @Test
+    void passWhenAgeIsWellFormatted() {
+        Individual i = TestExamples.getIndividualJohnny();
+        ValidationResult result = IndividualValidators.checkAgeIfPresent().validate(i);
+
+        assertThat(result, is(ValidationResult.pass()));
+    }
+
+    @Test
+    void passWhenAgeRangeIsWellFormatted() {
+        Individual i = TestExamples.getIndividualDonna();
+        ValidationResult result = IndividualValidators.checkAgeIfPresent().validate(i);
+
+        assertThat(result, is(ValidationResult.pass()));
+    }
+
+    @Test
+    void failWhenAgeIsMisformatted() {
+        Individual i = TestExamples.getIndividualJohnny().toBuilder()
+                .setAgeAtCollection(Age.newBuilder().setAge("PT").build())
+                .build();
+        ValidationResult result = IndividualValidators.checkAgeIfPresent().validate(i);
+
+        assertThat(result, is(ValidationResult.fail("You have to use at least one date|time element")));
+    }
+
+    @Test
+    void failWhenAgeRangeIsInvalid() {
+        Individual i = TestExamples.getIndividualDonna().toBuilder()
+                .setAgeRangeAtCollection(AgeRange.newBuilder()
+                        // start is valid, end is not
+                        .setStart(Age.newBuilder().setAge("P20Y").build())
+                        .setEnd(Age.newBuilder().setAge("PT").build())
+                        .build())
+                .build();
+
+        ValidationResult result = IndividualValidators.checkAgeIfPresent().validate(i);
+
+        assertThat(result, is(ValidationResult.fail("You have to use at least one date|time element")));
     }
 }
