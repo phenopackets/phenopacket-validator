@@ -6,12 +6,13 @@ import org.phenopackets.schema.v1.core.Age;
 import org.phenopackets.schema.v1.core.AgeRange;
 import org.phenopackets.schema.v1.core.Biosample;
 import org.phenopackets.schema.v1.core.Individual;
+import org.phenopackets.schema.validator.core.examples.TestExamples;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
-import static org.phenopackets.schema.validator.core.TestExamples.ontologyClass;
+import static org.phenopackets.schema.validator.core.examples.TestExamples.ontologyClass;
 
 class IndividualValidatorsTest {
 

@@ -5,13 +5,13 @@ import org.phenopackets.schema.v1.Phenopacket;
 import org.phenopackets.schema.v1.core.Individual;
 import org.phenopackets.schema.v1.core.OntologyClass;
 import org.phenopackets.schema.v1.core.Phenotype;
-import org.phenopackets.schema.validator.core.TestExamples;
+import org.phenopackets.schema.validator.core.examples.TestExamples;
 
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.phenopackets.schema.validator.core.TestExamples.*;
+import static org.phenopackets.schema.validator.core.examples.TestExamples.*;
 
 /**
  *

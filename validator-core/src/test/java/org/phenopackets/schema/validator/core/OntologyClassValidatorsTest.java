@@ -2,6 +2,7 @@ package org.phenopackets.schema.validator.core;
 
 import org.junit.jupiter.api.Test;
 import org.phenopackets.schema.v1.core.OntologyClass;
+import org.phenopackets.schema.validator.core.examples.TestExamples;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

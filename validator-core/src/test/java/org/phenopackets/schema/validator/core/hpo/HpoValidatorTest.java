@@ -10,7 +10,7 @@ import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.phenopackets.schema.v1.Phenopacket;
 import org.phenopackets.schema.v1.core.Phenotype;
-import org.phenopackets.schema.validator.core.TestExamples;
+import org.phenopackets.schema.validator.core.examples.TestExamples;
 import org.phenopackets.schema.validator.core.ValidationResult;
 
 import java.util.Collections;

@@ -5,6 +5,7 @@ import org.phenopackets.schema.v1.Phenopacket;
 import org.phenopackets.schema.v1.core.Age;
 import org.phenopackets.schema.v1.core.Disease;
 import org.phenopackets.schema.v1.core.Resource;
+import org.phenopackets.schema.validator.core.examples.TestExamples;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.phenopackets.schema.validator.core.ResourceValidators.IRI_PREFIX;
-import static org.phenopackets.schema.validator.core.TestExamples.ontologyClass;
+import static org.phenopackets.schema.validator.core.examples.TestExamples.ontologyClass;
 
 
 /**

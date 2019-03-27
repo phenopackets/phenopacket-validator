@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.phenopackets.schema.v1.Phenopacket;
 import org.phenopackets.schema.v1.core.MetaData;
 import org.phenopackets.schema.v1.core.Resource;
+import org.phenopackets.schema.validator.core.examples.TestExamples;
 
 import java.util.List;
 

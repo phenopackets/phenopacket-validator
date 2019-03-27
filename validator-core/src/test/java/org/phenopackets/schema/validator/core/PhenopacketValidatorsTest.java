@@ -1,28 +1,23 @@
 package org.phenopackets.schema.validator.core;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.phenopackets.schema.v1.Phenopacket;
+import org.phenopackets.schema.validator.core.examples.TestExamples;
 
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
 
-class RareDiseasePhenopacketValidatorTest {
 
-    private RareDiseasePhenopacketValidator instance;
-
-    @BeforeEach
-    void setUp() {
-        instance = new RareDiseasePhenopacketValidator();
-    }
+class PhenopacketValidatorsTest {
 
     @Test
     void failuresOnEmptyPhenopacket() {
         Phenopacket pp = Phenopacket.getDefaultInstance();
 
-        List<ValidationResult> results = instance.validate(pp);
+        List<ValidationResult> results = PhenopacketValidators.rareDiseasePhenopacketValidator().validate(pp);
 
         assertThat(results.size(), is(4));
         assertThat(results, hasItems(
@@ -33,12 +28,14 @@ class RareDiseasePhenopacketValidatorTest {
         ));
     }
 
+
     @Test
     void passWithValidPhenopacket() {
         Phenopacket pp = TestExamples.getJohnnyPhenopacket();
 
-        List<ValidationResult> results = instance.validate(pp);
+        List<ValidationResult> results = PhenopacketValidators.rareDiseasePhenopacketValidator().validate(pp);
 
         assertThat(results.isEmpty(), is(true));
     }
+
 }
