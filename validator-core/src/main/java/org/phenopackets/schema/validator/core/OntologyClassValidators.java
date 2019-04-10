@@ -17,9 +17,18 @@ public class OntologyClassValidators {
      * Basic check that fails when {@link OntologyClass} is uninitialized.
      */
     public static ValidationCheck<OntologyClass> checkNotEmpty() {
+        return checkNotEmpty("Ontology class must not be empty");
+    }
+
+    /**
+     * Basic check that fails when {@link OntologyClass} is uninitialized.
+     *
+     * @param failMessage message inserted into {@link ValidationResult} if the check fails
+     */
+    public static ValidationCheck<OntologyClass> checkNotEmpty(String failMessage) {
         return oc -> {
             if (oc.equals(OntologyClass.getDefaultInstance())) {
-                return ValidationResult.fail("Ontology class must not be empty");
+                return ValidationResult.fail(failMessage);
             }
             return ValidationResult.pass();
         };
