@@ -62,10 +62,10 @@ class OntologyClassValidatorsTest {
 
     @Test
     void failOnBadSuffixIdFormat() {
-        // Pattern "\d+" -
-        OntologyClass bad = OntologyClass.newBuilder().setId("PATO:O000384").setLabel("male").build();
+        // Pattern "[\w\d]+"
+        OntologyClass bad = OntologyClass.newBuilder().setId("PATO: 000384").setLabel("male").build();
         ValidationResult result = OntologyClassValidators.checkIdIsWellFormatted().validate(bad);
-        assertThat(result, is(ValidationResult.fail("Id suffix does not match '\\d+' pattern")));
+        assertThat(result, is(ValidationResult.fail("Id suffix does not match '[\\w\\d]+' pattern")));
     }
 
 

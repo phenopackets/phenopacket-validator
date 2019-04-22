@@ -9,6 +9,16 @@ import org.phenopackets.schema.v1.core.OntologyClass;
  */
 public class OntologyClassValidators {
 
+    /**
+     * Pattern for term id prefix, e.g. <code>HP</code>, <code>A_B</code>.
+     */
+    private static final String IDENTIFIER_PATTERN = "[A-Za-z_]+";
+
+    /**
+     * Pattern for term id suffix, e.g. <code>1234567</code>, <code>C28743</code>.
+     */
+    private static final String SUFFIX_PATTERN = "[\\w\\d]+";
+
     private OntologyClassValidators() {
         // private no-op
     }
@@ -55,16 +65,14 @@ public class OntologyClassValidators {
                 return ValidationResult.fail("Missing required ':' in the id string");
             } else {
                 String prefix = id.substring(0, colonIdx);
-                String identifierPattern = "[A-Za-z_]+";
-                if (!prefix.matches(identifierPattern)) {
+                if (!prefix.matches(IDENTIFIER_PATTERN)) {
                     // TODO - this is not very informative message for the end user, however I don't know what to put here
-                    return ValidationResult.fail(String.format("Id prefix does not match '%s' pattern", identifierPattern));
+                    return ValidationResult.fail(String.format("Id prefix does not match '%s' pattern", IDENTIFIER_PATTERN));
                 }
                 String suffix = id.substring(colonIdx + 1);
-                String suffixPattern = "\\d+";
-                if (!suffix.matches(suffixPattern)) {
+                if (!suffix.matches(SUFFIX_PATTERN)) {
                     // TODO - this is not very informative message for the end user as well
-                    return ValidationResult.fail(String.format("Id suffix does not match '%s' pattern", suffixPattern));
+                    return ValidationResult.fail(String.format("Id suffix does not match '%s' pattern", SUFFIX_PATTERN));
                 }
             }
             return ValidationResult.pass();
