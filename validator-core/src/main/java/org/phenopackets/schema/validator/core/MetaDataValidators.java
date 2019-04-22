@@ -1,9 +1,16 @@
 package org.phenopackets.schema.validator.core;
 
 import com.google.protobuf.Timestamp;
+import org.phenopackets.schema.v1.Phenopacket;
 import org.phenopackets.schema.v1.core.MetaData;
+import org.phenopackets.schema.v1.core.OntologyClass;
 import org.phenopackets.schema.v1.core.Resource;
+import org.phenopackets.schema.validator.core.util.MessageUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -13,11 +20,14 @@ import java.util.stream.Collectors;
  * <li>{@link MetaData} is not empty</li>
  * <li><code>created</code> {@link com.google.protobuf.Timestamp} is present</li>
  * <li><code>created_by</code> is not empty</li>
- * <li><code>submitted_by</code> is not empty</li>
- * <li>{@link MetaData} does not contain uninitialized {@link Resource}</li>
+ * <li>{@link MetaData} does not contain an empty {@link Resource}</li>
  * </ul>
- *
- * @author Daniel Danis <daniel.danis@jax.org>
+ * <p>
+ *     In addition, the Metadata element <em>must</em> have one {@link Resource} element for each ontology or terminology
+ *     whose terms are used in the {@link Phenopacket}. For instance, if a <em>MONDO</em> term is used to specify the
+ *     disease and <em>HPO</em> terms are used to specify the phenotypes of a patient, then the Metadata element <em>must</em>
+ *     have one {@link Resource} element each for <em>MONDO</em> and <em>HPO</em>.
+ * </p>
  */
 public class MetaDataValidators {
 
@@ -50,14 +60,6 @@ public class MetaDataValidators {
                 : ValidationResult.pass();
     }
 
-    /**
-     * Check field describing Phenopacket submitter is not empty.
-     */
-    public static ValidationCheck<MetaData> checkSubmittedByIsNotEmpty() {
-        return md -> md.getSubmittedBy().isEmpty()
-                ? ValidationResult.fail("Missing information about the person/organisation/network that has submitted the phenopacket (field 'submitted_by')")
-                : ValidationResult.pass();
-    }
 
     /**
      * Check that {@link MetaData} does not contain uninitialized resource
@@ -69,6 +71,33 @@ public class MetaDataValidators {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Check that {@link MetaData} has one {@link Resource} element for each ontology or terminology whose terms are
+     * used in the {@link Phenopacket}.
+     */
+    public static Validator<Phenopacket> checkPhenopacketHasAllResources() {
+        return pp -> {
+            List<ValidationResult> results = new ArrayList<>();
+            // Resource namespace prefixes that are present in phenopacket
+            Set<String> namespaces = pp.getMetaData().getResourcesList().stream()
+                    .map(Resource::getNamespacePrefix)
+                    .collect(Collectors.toSet());
+
+            List<OntologyClass> ocs = MessageUtils.getEmbeddedMessageFieldsOfType(pp, OntologyClass.class);
+
+            ocs.stream()
+                    .map(MessageUtils::getIdPrefix)
+                    .distinct()
+                    .filter(id -> !namespaces.contains(id))
+                    .filter(Objects::nonNull)
+                    .forEach(id -> results.add(
+                            ValidationResult.fail(String.format("Missing resource describing '%s' namespace", id))));
+
+            return results;
+        };
+    }
+
+}
 //    ValidationCheck<MetaData> checkMetaData() {
 //        return metadata -> {
             /*
@@ -99,4 +128,11 @@ public class MetaDataValidators {
 //        };
 //    }
 
-}
+//    /**
+//     * Check field describing Phenopacket submitter is not empty.
+//     */
+//    public static ValidationCheck<MetaData> checkSubmittedByIsNotEmpty() {
+//        return md -> md.getSubmittedBy().isEmpty()
+//                ? ValidationResult.fail("Missing information about the person/organisation/network that has submitted the phenopacket (field 'submitted_by')")
+//                : ValidationResult.pass();
+//    }

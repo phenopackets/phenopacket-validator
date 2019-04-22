@@ -3,6 +3,7 @@ package org.phenopackets.schema.validator.core;
 import org.junit.jupiter.api.Test;
 import org.phenopackets.schema.v1.Phenopacket;
 import org.phenopackets.schema.v1.core.MetaData;
+import org.phenopackets.schema.v1.core.Phenotype;
 import org.phenopackets.schema.v1.core.Resource;
 import org.phenopackets.schema.validator.core.examples.TestExamples;
 
@@ -73,23 +74,6 @@ class MetaDataValidatorsTest {
         assertThat(result, is(ValidationResult.fail("Missing author information (field 'created_by')")));
     }
 
-    // ------------------------ checkSubmittedByIsNotEmpty --------------------------------------
-    @Test
-    void passWhenSubmittedByIsPresent() {
-        MetaData md = TestExamples.makeValidMetadata();
-        ValidationResult result = MetaDataValidators.checkSubmittedByIsNotEmpty().validate(md);
-
-        assertThat(result, is(ValidationResult.pass()));
-    }
-
-    @Test
-    void failWhenSubmittedByIsEmpty() {
-        MetaData md = MetaData.getDefaultInstance();
-        ValidationResult result = MetaDataValidators.checkSubmittedByIsNotEmpty().validate(md);
-
-        assertThat(result, is(ValidationResult.fail("Missing information about the person/organisation/network that has " +
-                "submitted the phenopacket (field 'submitted_by')")));
-    }
 
     // ------------------------ checkMetaDataHasNoEmptyResource --------------------------------------
     @Test
@@ -116,4 +100,44 @@ class MetaDataValidatorsTest {
         assertThat(results, hasItem(ValidationResult.fail("Resource is empty")));
     }
 
+    // ------------------------ checkPhenopacketHasAllResources --------------------------------------
+
+
+    @Test
+    void failWhenResourceIsMissing() {
+        Phenopacket pp = Phenopacket.newBuilder()
+                .addPhenotypes(TestExamples.hepatosplenomegalyWithAdultOnset())
+                .build();
+
+        List<ValidationResult> results = MetaDataValidators.checkPhenopacketHasAllResources().validate(pp);
+
+        assertThat(results.size(), is(1));
+        assertThat(results, hasItem(ValidationResult.fail("Missing resource describing 'HP' namespace")));
+    }
+
+    @Test
+    void passWhenAllResourcesArePresent() {
+        Phenopacket pp = TestExamples.getJohnnyPhenopacket();
+        List<ValidationResult> results = MetaDataValidators.checkPhenopacketHasAllResources().validate(pp);
+
+        assertThat(results.size(), is(0));
+    }
 }
+
+// ------------------------ checkSubmittedByIsNotEmpty --------------------------------------
+//    @Test
+//    void passWhenSubmittedByIsPresent() {
+//        MetaData md = TestExamples.makeValidMetadata();
+//        ValidationResult result = MetaDataValidators.checkSubmittedByIsNotEmpty().validate(md);
+//
+//        assertThat(result, is(ValidationResult.pass()));
+//    }
+//
+//    @Test
+//    void failWhenSubmittedByIsEmpty() {
+//        MetaData md = MetaData.getDefaultInstance();
+//        ValidationResult result = MetaDataValidators.checkSubmittedByIsNotEmpty().validate(md);
+//
+//        assertThat(result, is(ValidationResult.fail("Missing information about the person/organisation/network that has " +
+//                "submitted the phenopacket (field 'submitted_by')")));
+//    }

@@ -7,10 +7,8 @@ import org.phenopackets.schema.validator.core.util.MessageUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,10 +18,7 @@ import java.util.stream.Collectors;
  *
  * <ul>
  * <li>resource is not empty</li>
- * <li>URL is properly formatted</li>
- * <li><code>namespace_prefix</code> corresponds with <code>iri_prefix</code>
- * (e.g. if <code>namespace_prefix=HP</code>, then <code>iri_prefix=http://purl.obolibrary.org/obo/HP_</code></li>
- * <li><code>version</code> is not empty</li>
+ * <li>fields <code>id</code>, <code>name</code>, <code>namespace_prefix</code>, <code>url</code>, <code>version</code>, <code>iri_prefix</code> are not empty</li>
  * </ul>
  * <p>
  * Check on {@link Phenopacket} level:
@@ -32,8 +27,12 @@ import java.util.stream.Collectors;
  * {@link OntologyClass} instance</li>
  * <li>there is no undefined {@link Resource} present for used {@link OntologyClass} bits</li>
  * </ul>
+ * </p>
+ *<p>
+ *  Additional check available: <br><code>namespace_prefix</code> corresponds with <code>iri_prefix</code>
+ *  (e.g. if <code>namespace_prefix=HP</code>, then <code>iri_prefix=http://purl.obolibrary.org/obo/HP_</code>
+ *</p>
  *
- * @author Daniel Danis <daniel.danis@jax.org>
  */
 public class ResourceValidators {
 
@@ -42,17 +41,55 @@ public class ResourceValidators {
      */
     static final Pattern IRI_PREFIX = Pattern.compile("http://[\\w+./]+/([a-zA-Z]+)_");
 
-    private static final Pattern TERM_ID = Pattern.compile("(\\w+):(\\d+)");
+
 
     private ResourceValidators() {
         // private no-op
     }
+
 
     public static ValidationCheck<Resource> checkResourceIsNotEmpty() {
         return r -> r.equals(Resource.getDefaultInstance())
                 ? ValidationResult.fail("Resource is empty")
                 : ValidationResult.pass();
     }
+
+
+    /**
+     * @return {@link Validator} for checking that following elements are not empty:
+     * <ul>
+     * <li><code>id</code></li>
+     * <li><code>name</code></li>
+     * <li><code>namespace_prefix</code></li>
+     * <li><code>url</code></li>
+     * <li><code>version</code></li>
+     * <li><code>iri_prefix</code></li>
+     * </ul>
+     */
+    public static Validator<Resource> checkRequiredDataIsNotEmpty() {
+        return r -> {
+            List<ValidationResult> results = new ArrayList<>(6);
+            List<Supplier<String>> els = Arrays.asList(r::getId, r::getName,
+                    r::getNamespacePrefix, r::getUrl,
+                    r::getVersion, r::getIriPrefix);
+            List<String> messages = Arrays.asList("Resource id must not be empty", "Resource name must not be empty",
+                    "Resource namespace prefix must not be empty", "Resource url must not be empty",
+                    "Resource version must not be empty", "Resource iri prefix must not be empty");
+
+            for (int i = 0; i < els.size(); i++) {
+                results.add(els.get(i).get().isEmpty()
+                        ? ValidationResult.fail(messages.get(i))
+                        : ValidationResult.pass());
+            }
+
+            // report only not valid
+            return results.stream()
+                    .filter(ValidationResult::notValid)
+                    .collect(Collectors.toList());
+        };
+
+    }
+
 
     public static ValidationCheck<Resource> checkUrlSyntax() {
         return r -> {
@@ -75,7 +112,7 @@ public class ResourceValidators {
 
             List<OntologyClass> ocs = MessageUtils.getEmbeddedMessageFieldsOfType(pp, OntologyClass.class);
             Set<String> termIdPrefixes = ocs.stream()
-                    .map(ResourceValidators::getIdPrefix)
+                    .map(MessageUtils::getIdPrefix)
                     .filter(Objects::nonNull)
                     .filter(s -> !s.isEmpty())
                     .collect(Collectors.toSet());
@@ -104,7 +141,7 @@ public class ResourceValidators {
 
             List<OntologyClass> terms = MessageUtils.getEmbeddedMessageFieldsOfType(pp, OntologyClass.class);
             for (OntologyClass term : terms) {
-                String termIdPrefix = getIdPrefix(term);
+                String termIdPrefix = MessageUtils.getIdPrefix(term);
                 if (termIdPrefix == null || termIdPrefix.isEmpty()) {
                     continue;
                 }
@@ -149,20 +186,6 @@ public class ResourceValidators {
                 : ValidationResult.fail(String.format("IRI prefix '%s' does not match pattern '%s'", r.getIriPrefix(), IRI_PREFIX.pattern()));
     }
 
-
-    public static ValidationCheck<Resource> checkVersionIsNotEmpty() {
-        return r -> r.getVersion().isEmpty()
-                ? ValidationResult.fail(String.format("Version information is missing from resource '%s'", r.getName()))
-                : ValidationResult.pass();
-    }
-
-    private static String getIdPrefix(OntologyClass oc) {
-        Matcher idMatcher = TERM_ID.matcher(oc.getId());
-        if (idMatcher.matches()) {
-            return idMatcher.group(1);
-        }
-        return null;
-    }
 
 //    public static ValidationCheck<Resource> checkUrlMatchesPurl() {
 //        return r -> {

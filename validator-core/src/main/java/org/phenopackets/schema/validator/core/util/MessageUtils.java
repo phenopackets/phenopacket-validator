@@ -3,16 +3,24 @@ package org.phenopackets.schema.validator.core.util;
 import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
+import org.phenopackets.schema.v1.core.OntologyClass;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author Daniel Danis <daniel.danis@jax.org>
  */
 public class MessageUtils {
+
+    /**
+     * Regexp for matching ontology term ids, such as <em>HP:1234567</em>.
+     */
+    private static final Pattern TERM_ID = Pattern.compile("(\\w+):(\\d+)");
 
     /**
      * Get all message fields with <code>type</code> {@link T} that are embedded in <code>message</code>.
@@ -66,5 +74,13 @@ public class MessageUtils {
         });
 
         return resultBuilder.build();
+    }
+
+    public static String getIdPrefix(OntologyClass oc) {
+        Matcher idMatcher = TERM_ID.matcher(oc.getId());
+        if (idMatcher.matches()) {
+            return idMatcher.group(1);
+        }
+        return null;
     }
 }

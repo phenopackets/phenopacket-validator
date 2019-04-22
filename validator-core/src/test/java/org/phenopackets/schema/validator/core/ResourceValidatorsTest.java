@@ -9,8 +9,7 @@ import org.phenopackets.schema.validator.core.examples.TestExamples;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.phenopackets.schema.validator.core.ResourceValidators.IRI_PREFIX;
 import static org.phenopackets.schema.validator.core.examples.TestExamples.ontologyClass;
@@ -166,21 +165,30 @@ class ResourceValidatorsTest {
                 "not match pattern '%s'", IRI_PREFIX.pattern()))));
     }
 
-    // ------------------------ checkVersionIsNotEmpty --------------------------------------
-    @Test
-    void passWhenVersionIsNotEmpty() {
-        Resource hpoRs = TestExamples.getHpoResource();
+    // ------------------------ checkRequiredDataIsNotEmpty ------------------------------------------------------
 
-        ValidationResult result = ResourceValidators.checkVersionIsNotEmpty().validate(hpoRs);
-        assertThat(result, is(ValidationResult.pass()));
+
+    @Test
+    void faliWhenRequiredDataIsEmpty() {
+        Resource r = Resource.getDefaultInstance();
+        List<ValidationResult> results = ResourceValidators.checkRequiredDataIsNotEmpty().validate(r);
+
+        assertThat(results.size(), is(6));
+        assertThat(results, hasItems(
+                ValidationResult.fail("Resource id must not be empty"),
+                ValidationResult.fail("Resource name must not be empty"),
+                ValidationResult.fail("Resource namespace prefix must not be empty"),
+                ValidationResult.fail("Resource url must not be empty"),
+                ValidationResult.fail("Resource version must not be empty"),
+                ValidationResult.fail("Resource iri prefix must not be empty")
+                ));
     }
 
     @Test
-    void failWhenVersionIsEmpty() {
-        String name = "Phenotype And Trait Ontology";
-        Resource r = Resource.newBuilder().setName(name).build();
+    void passWhenRequiredDataIsNotEmpty() {
+        Resource r = TestExamples.getHpoResource();
+        List<ValidationResult> results = ResourceValidators.checkRequiredDataIsNotEmpty().validate(r);
 
-        ValidationResult result = ResourceValidators.checkVersionIsNotEmpty().validate(r);
-        assertThat(result, is(ValidationResult.fail(String.format("Version information is missing from resource '%s'", name))));
+        assertThat(results.size(), is(0));
     }
 }
