@@ -50,8 +50,7 @@ public class PhenopacketValidators {
             // subject must be present and have an id
             results.add(IndividualValidators.checkThatSubjectIsNotEmpty().validate(pp));
             results.add(IndividualValidators.checkIdIsNotEmpty().validate(pp.getSubject()));
-            // taxonomy must be defined
-            results.add(IndividualValidators.checkTaxonomyIsNotEmpty().validate(pp.getSubject()));
+
             // age string must be well formatted if present
             results.add(IndividualValidators.checkAgeIfPresent().validate(pp.getSubject()));
 

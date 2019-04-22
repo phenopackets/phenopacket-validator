@@ -19,11 +19,10 @@ class PhenopacketValidatorsTest {
 
         List<ValidationResult> results = PhenopacketValidators.rareDiseasePhenopacketValidator().validate(pp);
 
-        assertThat(results.size(), is(4));
+        assertThat(results.size(), is(3));
         assertThat(results, hasItems(
                 ValidationResult.fail("Subject must not be empty"),
                 ValidationResult.fail("Individual must have an id"),
-                ValidationResult.fail("Individual's taxonomy info must be present"),
                 ValidationResult.fail("Metadata is empty")
         ));
     }

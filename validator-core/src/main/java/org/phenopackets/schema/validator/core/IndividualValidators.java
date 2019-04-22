@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
  * Requirements for {@link Individual}:
  * <ul>
  * <li>individual must not be empty</li>
- * <li>individual must have an id</li>
+ * <li><code>id</code> must be present</li>
+ * <li><code>age</code> should be present and if it is, then it must be well formatted</li>
+ * <li><code>sex</code> should be specified</li>
  * </ul>
  * <p>
  * Checks performed on {@link Phenopacket} level:
@@ -54,14 +56,10 @@ public class IndividualValidators {
     }
 
     /**
-     * Check that the {@link Individual}'s taxonomy info is present.
+     * {@link Age} information should be specified, otherwise a warning is emitted.
+     * <p>
+     *     Age must also be valid if specified.
      */
-    public static ValidationCheck<Individual> checkTaxonomyIsNotEmpty() {
-        return i -> i.getTaxonomy().equals(OntologyClass.getDefaultInstance())
-                ? ValidationResult.fail("Individual's taxonomy info must be present")
-                : ValidationResult.pass();
-    }
-
     public static ValidationCheck<Individual> checkAgeIfPresent() {
         return i -> {
             switch (i.getAgeCase()) {
@@ -77,10 +75,22 @@ public class IndividualValidators {
                             ? AgeValidators.ageStringIsWellFormatted().validate(end)
                             : startResult;
                 case AGE_NOT_SET:
+                    return ValidationResult.warn("Age should be specified");
                 default:
+                    // This might happen if the Age element is extended in future. In that case we'd have to revisit this
+                    // code anyway
                     return ValidationResult.pass();
             }
         };
+    }
+
+    /**
+     * {@link Sex} information should be provided, otherwise a warning is emitted.
+     */
+    public static ValidationCheck<Individual> checkSexIfPresent() {
+        return i -> i.getSex().equals(Sex.UNKNOWN_SEX)
+                ? ValidationResult.warn("Sex should be specified")
+                : ValidationResult.pass();
     }
 
     /**

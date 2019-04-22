@@ -130,24 +130,6 @@ class IndividualValidatorsTest {
         assertThat(results.isEmpty(), is(true));
     }
 
-    // ------------------------ checkThatSubjectIdCorrespondsToBiosampleIndividualIds -------------------------------------
-
-    @Test
-    void passWhenTaxonomyIsPresent() {
-        Phenopacket pp = TestExamples.getJohnnyPhenopacket();
-        ValidationResult result = IndividualValidators.checkTaxonomyIsNotEmpty().validate(pp.getSubject());
-
-        assertThat(result, is(ValidationResult.pass()));
-    }
-
-    @Test
-    void failWhenTaxonomyIsMissing() {
-        Individual i = Individual.getDefaultInstance();
-        ValidationResult result = IndividualValidators.checkTaxonomyIsNotEmpty().validate(i);
-
-        assertThat(result, is(ValidationResult.fail("Individual's taxonomy info must be present")));
-    }
-
 
     // ------------------------ checkAgeIfPresent -------------------------------------
 
@@ -156,7 +138,7 @@ class IndividualValidatorsTest {
         Individual i = Individual.getDefaultInstance();
         ValidationResult result = IndividualValidators.checkAgeIfPresent().validate(i);
 
-        assertThat(result, is(ValidationResult.pass()));
+        assertThat(result, is(ValidationResult.warn("Age should be specified")));
     }
 
     @Test
@@ -198,5 +180,22 @@ class IndividualValidatorsTest {
         ValidationResult result = IndividualValidators.checkAgeIfPresent().validate(i);
 
         assertThat(result, is(ValidationResult.fail("You have to use at least one date|time element")));
+    }
+
+    // ------------------------ checkSexIfPresent -------------------------------------
+
+
+    @Test
+    void warnWhenSexIsNotSpecified() {
+        Individual i = Individual.getDefaultInstance();
+        ValidationResult results = IndividualValidators.checkSexIfPresent().validate(i);
+        assertThat(results, is(ValidationResult.warn("Sex should be specified")));
+    }
+
+    @Test
+    void passWhenSexIsPresent() {
+        Individual i = TestExamples.getIndividualJohnny();
+        ValidationResult results = IndividualValidators.checkSexIfPresent().validate(i);
+        assertThat(results, is(ValidationResult.pass()));
     }
 }
