@@ -8,6 +8,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+/**
+ * Requirements for {@link Evidence}:
+ * <ul>
+ * <li><code>evidence_code</code> must not be empty and {@link OntologyClass} representing the code must be well formatted</li>
+ * </ul>
+ */
 public class EvidenceValidators {
 
     private EvidenceValidators() {
