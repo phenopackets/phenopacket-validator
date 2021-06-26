@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema#",
+  "title": "Phenopacket",
+  "description": "General requirments for any GA4GH Phenopacket",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "The unique identifier for the subject of the Phenopacket",
+      "type": "string"
+    }
+  },
+  "required": ["id"]
+}

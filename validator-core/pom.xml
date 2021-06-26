@@ -30,6 +30,12 @@
             <version>${phenopacket-schema.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>1.0.42</version>
+        </dependency>
+
         <!-- Utility for inter-converting CURIEs and IRIs -->
         <dependency>
             <groupId>org.prefixcommons</groupId>
@@ -42,4 +48,47 @@
             <version>26.0-jre</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+
+        <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.2.0</version>
+            <executions>
+                <execution>
+                    <id>copy-resources</id>
+                    <phase>validate</phase>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/resources</outputDirectory>
+                        <resources>
+                            <resource>
+                                <directory>src/main/resources</directory>
+                                <!--Use filtering so that maven will replace placeholders
+                                  with values from the pom e.g. ${project.version} -->
+                                <filtering>true</filtering>
+                                <includes>
+                                    <include>schema</include>
+                                    <include>log4j2.xml</include>
+                                </includes>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+
+</build>
+
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 </project>
