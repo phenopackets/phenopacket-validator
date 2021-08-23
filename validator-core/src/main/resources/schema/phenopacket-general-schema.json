@@ -40,6 +40,7 @@
     "minItems": 1
   },
   "required": ["id", "metaData"],
+  "additionalProperties": false,
   "$defs": {
       "ontologyClass": {
         "type": "object",

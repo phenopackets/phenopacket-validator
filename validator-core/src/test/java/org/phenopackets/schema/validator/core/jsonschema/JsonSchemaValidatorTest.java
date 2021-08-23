@@ -47,6 +47,9 @@ public class JsonSchemaValidatorTest {
         String validSimplePhenopacket = fileFromClasspath("json/bethlehamMyopathyInvalidExample.json");
         JsonSchemaValidator validator = new JsonSchemaValidator();
         List<ValidationError> errors = validator.validate(validSimplePhenopacket);
+        for (ValidationError ve : errors) {
+            System.out.println(ve.getMessage());
+        }
         assertEquals(1, errors.size());
         ValidationError error = errors.get(0);
         assertEquals("required", error.getType());
