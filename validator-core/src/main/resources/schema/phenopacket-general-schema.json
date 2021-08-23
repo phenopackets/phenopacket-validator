@@ -32,9 +32,17 @@
       },
       "required": [ "id"]
   },
+  "phenotypicFeatures" : {
+    "type": "array",
+    "items": {
+      "type": "phenotypicFeature"
+    },
+    "minItems": 1
+  },
   "required": ["id", "metaData"],
   "$defs": {
-      "ontologyClass": { "type": "object",
+      "ontologyClass": {
+        "type": "object",
         "properties": {
           "id": {
             "description": "a CURIE-style identifier e.g. HP:0001875.",
@@ -45,6 +53,29 @@
             "type": "string"
           }
         }
+      },
+    "phenotypicFeature": {
+      "type": "object",
+      "properties": {
+        "description": "string",
+        "type": {
+          "$ref": "#/$defs/ontologyClass"
+        },
+        "excluded": "boolean",
+        "severity": {
+          "$ref": "#/$defs/ontologyClass"
+        },
+        "modifiers": {
+          "type": "array",
+          "items": {
+            "type": {
+              "$ref": "#/$defs/ontologyClass"
+            }
+          }
+        }
+      },
+      "required": ["type"],
+        "__comment":"# TODO onset, evidence, etc."
       },
     "age": {
       "type": "object",
