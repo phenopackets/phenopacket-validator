@@ -5,9 +5,67 @@
   "type": "object",
   "properties": {
     "id": {
-      "description": "The unique identifier for the subject of the Phenopacket",
+      "description": "The unique identifier for the Phenopacket",
       "type": "string"
-    }
+    },
+    "subject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "An arbitrary identifier for the subject of the Phenopacket",
+          "type": "string"
+        },
+        "alternate_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "__comment":"# TODO CURIE not PLAIN STRING????...",
+          "minItems": 0,
+          "uniqueItems": true
+        }
+        },
+        "date_of_birth": {
+          "type": "string",
+          "__comment":"# TODO timestamp not PLAIN STRING????..."
+        }
+      },
+      "required": [ "id"]
   },
-  "required": ["id"]
+  "required": ["id", "metaData"],
+  "$defs": {
+      "ontologyClass": { "type": "object",
+        "properties": {
+          "id": {
+            "description": "a CURIE-style identifier e.g. HP:0001875.",
+            "type": "string"
+          },
+          "label": {
+            "description": "human-readable, class name",
+            "type": "string"
+          }
+        }
+      },
+    "age": {
+      "type": "object",
+      "properties": {
+        "iso8601duration": {
+          "description": "An ISO8601 string representing age.",
+          "type": "string"
+        },
+        "required": [ "iso8601duration"]
+      }
+    },
+    "ageRange": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "age"
+        },
+        "end": {
+          "type": "age"
+        }
+        }
+       }
+  }
 }
