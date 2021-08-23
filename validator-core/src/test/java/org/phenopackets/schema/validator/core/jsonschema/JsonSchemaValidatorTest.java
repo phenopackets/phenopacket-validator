@@ -42,5 +42,16 @@ public class JsonSchemaValidatorTest {
         assertTrue(errors.isEmpty());
     }
 
+    @Test
+    public void testRareDiseaseBethlemahmInvalidValidPhenopacket() throws IOException {
+        String validSimplePhenopacket = fileFromClasspath("json/bethlehamMyopathyInvalidExample.json");
+        JsonSchemaValidator validator = new JsonSchemaValidator();
+        List<ValidationError> errors = validator.validate(validSimplePhenopacket);
+        assertEquals(1, errors.size());
+        ValidationError error = errors.get(0);
+        assertEquals("required", error.getType());
+        assertEquals("$.id: is missing but it is required", error.getMessage());
+    }
+
 
 }
