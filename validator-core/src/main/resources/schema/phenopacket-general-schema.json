@@ -20,28 +20,40 @@
           "items": {
             "type": "string"
           },
-          "__comment":"# TODO CURIE not PLAIN STRING????...",
+          "__comment": "# TODO CURIE not PLAIN STRING????...",
           "minItems": 0,
           "uniqueItems": true
         }
-        },
-        "date_of_birth": {
-          "type": "string",
-          "__comment":"# TODO timestamp not PLAIN STRING????..."
-        }
       },
-      "required": [ "id"]
-  },
-  "phenotypicFeatures" : {
-    "type": "array",
-    "items": {
-      "type": "phenotypicFeature"
+      "date_of_birth": {
+        "type": "string",
+        "__comment": "# TODO timestamp not PLAIN STRING????..."
+      },
+      "required": [
+        "id"
+      ]
     },
-    "minItems": 1
+    "phenotypicFeatures": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/phenotypicFeature"
+      },
+      "minItems": 1
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/file"
+      },
+      "minItems": 0
+    },
+    "required": [
+      "id",
+      "metaData"
+    ],
+    "additionalProperties": false
   },
-  "required": ["id", "metaData"],
-  "additionalProperties": false,
-  "$defs": {
+  "definitions": {
       "ontologyClass": {
         "type": "object",
         "properties": {
@@ -60,17 +72,17 @@
       "properties": {
         "description": "string",
         "type": {
-          "$ref": "#/$defs/ontologyClass"
+          "$ref": "#/definitions/ontologyClass"
         },
         "excluded": "boolean",
         "severity": {
-          "$ref": "#/$defs/ontologyClass"
+          "$ref": "#/definitions/ontologyClass"
         },
         "modifiers": {
           "type": "array",
           "items": {
             "type": {
-              "$ref": "#/$defs/ontologyClass"
+              "$ref": "#/definitions/ontologyClass"
             }
           }
         }
@@ -97,7 +109,28 @@
         "end": {
           "type": "age"
         }
+      }
+    },
+    "file": {
+      "type": "object",
+      "properties": {
+        "uri": "string",
+        "individual_to_file_identifiers": {
+          "title": "Map<String,String>",
+          "type": "object",
+          "patternProperties": {
+            ".{1,}": { "type": "string" }
+          }
+        },
+        "file_attributes": {
+          "title": "Map<String,String>",
+          "type": "object",
+          "patternProperties": {
+            ".{1,}": { "type": "string" }
+          }
         }
-       }
+      },
+      "required": ["uri"]
+    }
   }
 }
