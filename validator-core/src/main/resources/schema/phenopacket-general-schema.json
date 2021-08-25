@@ -155,6 +155,38 @@
       },
       "additionalProperties": false
     },
+    "variantInterpretation": {
+      "type": "null"
+    },
+    "geneDescriptor": {
+      "type": "object",
+      "properties": {
+        "valueId": { "type": "string" },
+        "symbol": { "type": "string" },
+        "description": { "type": "string" },
+        "alternateIds": {
+            "type": "array",
+              "items": { "type": "string" }
+        },
+        "xrefs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "alternateSymbols": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "genomicInterpretation": {
+      "type": "object",
+      "properties": {
+        "subjectOrBiosampleId": { "type": "string" },
+        "interpretationStatus": { "enum": ["UNKNOWN_STATUS","REJECTED","CANDIDATE", "CONTRIBUTORY","CAUSATIVE"]},
+        "variationInterpretation" : {
+          "oneOf": [{"$ref": "#/definitions/geneDescriptor"}, {"$ref": "#/definitions/geneDescriptor"}]}
+        }
+    },
     "resource": {
       "type": "object",
       "properties": {
