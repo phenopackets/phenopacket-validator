@@ -95,12 +95,6 @@
       "namespacePrefix": "GENO",
       "iriPrefix": "http://purl.obolibrary.org/obo/GENO_"
     }, {
-      "id": "ncbitaxon",
-      "name": "NCBI organismal classification",
-      "url": "http://purl.obolibrary.org/obo/ncbitaxon.owl",
-      "version": "2018-03-02",
-      "namespacePrefix": "NCBITaxon"
-    }, {
       "id": "eco",
       "name": "Evidence and Conclusion Ontology",
       "url": "http://purl.obolibrary.org/obo/eco.owl",
@@ -110,10 +104,12 @@
     }, {
       "id": "omim",
       "name": "Online Mendelian Inheritance in Man",
+      "version": "2020-11-10",
       "url": "https://www.omim.org",
-      "namespacePrefix": "OMIM"
+      "namespacePrefix": "OMIM",
+      "iriPrefix": "http://purl.obolibrary.org/obo/OMIM_"
     }],
-    "phenopacketSchemaVersion": "1.0.0",
+    "phenopacketSchemaVersion": "2.0",
     "externalReferences": [{
       "id": "PMID:20842687",
       "description": "Severe dystonic encephalopathy without hyperphenylalaninemia associated with an 18-bp deletion within the proximal GCH1 promoter."

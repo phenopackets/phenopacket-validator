@@ -12,8 +12,6 @@ import com.networknt.schema.ValidationMessage;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +22,11 @@ public class JsonSchemaValidator {
 
     private JsonSchema phenopacketsBaseSchema;
     private  ObjectMapper objectMapper = new ObjectMapper();
+    /** The latest version of the spec that is supported by our JSON SCHEMA library is 2019/09. */
+    private static final SpecVersion.VersionFlag VERSION_FLAG = SpecVersion.VersionFlag.V201909;
 
     public JsonSchemaValidator() {
-        JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
+        JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance(VERSION_FLAG);
         try {
             InputStream baseSchemaStream = inputStreamFromClasspath("schema/phenopacket-general-schema.json");
             this.phenopacketsBaseSchema = schemaFactory.getSchema(baseSchemaStream);

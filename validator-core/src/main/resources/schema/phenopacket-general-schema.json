@@ -1,7 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema#",
+  "$id": "https://www.ga4gh.org/phenopackets",
   "title": "Phenopacket",
-  "description": "General requirments for any GA4GH Phenopacket",
+  "description": "Schema for Global Alliance for Genomics and Health (GA4GH) Phenopacket",
   "type": "object",
   "properties": {
     "id": {
@@ -29,108 +30,143 @@
         "type": "string",
         "__comment": "# TODO timestamp not PLAIN STRING????..."
       },
-      "required": [
-        "id"
-      ]
+      "required": ["id"]
     },
     "phenotypicFeatures": {
       "type": "array",
-      "items": {
-        "$ref": "#/definitions/phenotypicFeature"
-      },
+      "items": { "$ref": "#/definitions/phenotypicFeature" },
       "minItems": 1
     },
     "files": {
       "type": "array",
-      "items": {
-        "$ref": "#/definitions/file"
-      },
+      "items": { "$ref": "#/definitions/file" },
       "minItems": 0
     },
-    "required": [
-      "id",
-      "metaData"
-    ],
-    "additionalProperties": false
-  },
-  "definitions": {
-      "ontologyClass": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "description": "a CURIE-style identifier e.g. HP:0001875.",
-            "type": "string"
+    "metaData": {
+      "type": "object",
+      "properties": {
+        "created": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "submittedBy": {
+          "type": "string"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/resource"
           },
-          "label": {
-            "description": "human-readable, class name",
-            "type": "string"
-          }
+          "minItems": 1
+        },
+        "phenopacketSchemaVersion": { "enum": ["2.0"]},
+        "externalReferences": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/externalReference" },
+          "minItems": 0
         }
       },
+      "required": ["created", "createdBy","phenopacketSchemaVersion"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "id", "metaData" ],
+  "definitions": {
+    "ontologyClass": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "a CURIE-style identifier e.g. HP:0001875.",
+          "type": "string"
+        },
+        "label": {
+          "description": "human-readable, class name",
+          "type": "string"
+        }
+      }
+    },
     "phenotypicFeature": {
       "type": "object",
       "properties": {
-        "description": "string",
         "type": {
           "$ref": "#/definitions/ontologyClass"
         },
-        "excluded": "boolean",
+        "excluded": { "type": "boolean"},
         "severity": {
           "$ref": "#/definitions/ontologyClass"
         },
         "modifiers": {
           "type": "array",
           "items": {
-            "type": {
-              "$ref": "#/definitions/ontologyClass"
-            }
+            "$ref": "#/definitions/ontologyClass"
           }
         }
       },
       "required": ["type"],
-        "__comment":"# TODO onset, evidence, etc."
-      },
+      "__comment":"# TODO onset, evidence, etc."
+    },
     "age": {
       "type": "object",
       "properties": {
         "iso8601duration": {
           "description": "An ISO8601 string representing age.",
           "type": "string"
-        },
-        "required": [ "iso8601duration"]
-      }
+        }
+      },
+      "required": [ "iso8601duration"]
     },
     "ageRange": {
       "type": "object",
       "properties": {
-        "start": {
-          "type": "age"
-        },
-        "end": {
-          "type": "age"
-        }
+        "start": { "$ref": "#/definitions/age" },
+        "end": { "$ref": "#/definitions/age" }
       }
     },
     "file": {
       "type": "object",
       "properties": {
-        "uri": "string",
+        "uri": { "type":"string"},
         "individual_to_file_identifiers": {
           "title": "Map<String,String>",
           "type": "object",
           "patternProperties": {
-            ".{1,}": { "type": "string" }
+            ".+": { "type": "string" }
           }
         },
         "file_attributes": {
           "title": "Map<String,String>",
           "type": "object",
           "patternProperties": {
-            ".{1,}": { "type": "string" }
+            ".+": { "type": "string" }
           }
         }
       },
       "required": ["uri"]
+    },
+    "externalReference": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "reference":{ "type": "string" },
+        "description":{ "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "resource": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "version": { "type": "string" },
+        "namespacePrefix": { "type": "string" },
+        "iriPrefix": { "type": "string" }
+      },
+      "required": ["id","name","url","version","namespacePrefix","iriPrefix"],
+      "additionalProperties": false
     }
   }
 }
