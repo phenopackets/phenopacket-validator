@@ -37,6 +37,11 @@
       "items": { "$ref": "#/definitions/phenotypicFeature" },
       "minItems": 1
     },
+    "interpretations": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/interpretation" },
+      "minItems": 0
+    },
     "files": {
       "type": "array",
       "items": { "$ref": "#/definitions/file" },
@@ -186,6 +191,33 @@
         "variationInterpretation" : {
           "oneOf": [{"$ref": "#/definitions/geneDescriptor"}, {"$ref": "#/definitions/geneDescriptor"}]}
         }
+    },
+    "diagnosis": {
+      "type": "object",
+      "properties": {
+        "disease": {
+          "$ref": "#/definitions/ontologyClass"
+        },
+        "genomicInterpretations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/genomicInterpretation"
+          }
+        }
+      },
+      "required": ["disease"]
+    },
+    "interpretation": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "progressStatus": { "enum": ["UNKNOWN_PROGRESS", "IN_PROGRESS", "COMPLETED", "SOLVED", "UNSOLVED"] },
+        "diagnosis": { "$ref": "#/definitions/diagnosis"}
+      },
+      "required": ["id",  "progressStatus"]
+    },
+      "variationInterpretation" : {
+          "oneOf": [{"$ref": "#/definitions/geneDescriptor"}, {"$ref": "#/definitions/geneDescriptor"}]
     },
     "resource": {
       "type": "object",
