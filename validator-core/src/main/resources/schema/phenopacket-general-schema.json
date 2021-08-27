@@ -98,6 +98,45 @@
         }
       }
     },
+    "gestationalAge": {
+      "type": "object",
+      "properties": {
+        "weeks": {"type": "integer"},
+        "days": { "type": "integer"}
+      },
+      "required": ["weeks"],
+      "additionalProperties": false
+    },
+    "timeInterval": {
+      "type": "object",
+      "properties": {
+        "start": {"type": "string",  "format": "date-time" },
+        "end": {"type": "string",  "format": "date-time" }
+      },
+      "required": ["start", "end"],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "evidenceCode": {
+          "$ref": "#/definitions/ontologyClass"
+        },
+        "reference": {
+          "$ref": "#/definitions/externalReference"
+        }
+      }
+    },
+    "timeElement": {
+      "anyOf": [
+        {"$ref": "#/definitions/gestationalAge"},
+        {"$ref": "#/definitions/age"},
+        {"$ref": "#/definitions/ageRange"},
+        {"$ref": "#/definitions/ontologyClass"},
+        {"type": "string", "format": "date-time"},
+        {"$ref": "#/definitions/timeInterval"}
+      ]
+    },
     "phenotypicFeature": {
       "type": "object",
       "properties": {
@@ -113,10 +152,23 @@
           "items": {
             "$ref": "#/definitions/ontologyClass"
           }
+        },
+        "onset": {
+          "$ref": "#/definitions/timeElement"
+        },
+        "resolution": {
+          "$ref": "#/definitions/timeElement"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/evidence"
+          },
+          "minItems": 0
         }
       },
       "required": ["type"],
-      "__comment":"# TODO onset, evidence, etc."
+      "additionalProperties": false
     },
     "referenceRange": {
       "type": "object",
