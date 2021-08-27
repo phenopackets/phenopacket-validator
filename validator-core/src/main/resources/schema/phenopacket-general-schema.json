@@ -37,6 +37,11 @@
       "items": { "$ref": "#/definitions/phenotypicFeature" },
       "minItems": 1
     },
+    "measurements": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/measurement" },
+      "minItems": 0
+    },
     "interpretations": {
       "type": "array",
       "items": { "$ref": "#/definitions/interpretation" },
@@ -112,6 +117,35 @@
       },
       "required": ["type"],
       "__comment":"# TODO onset, evidence, etc."
+    },
+    "referenceRange": {
+      "type": "object",
+      "properties": {
+        "unit": {"$ref": "#/definitions/ontologyClass"},
+        "low": {"type": "number"},
+        "high": {"type": "number"}
+      },
+      "required": ["unit", "low", "high"],
+      "additionalProperties": false
+    },
+    "quantity": {
+      "type": "object",
+      "properties": {
+        "unit": {"$ref": "#/definitions/ontologyClass"},
+        "value": {"type": "number"},
+        "referenceRange": {"$ref": "#/definitions/referenceRange"}
+      },
+      "required": ["unit", "value"],
+      "additionalProperties": false
+    },
+    "value": {
+      "oneOf": [{"$ref": "#/definitions/ontologyClass"}, {"$ref": "#/definitions/quantity"}]
+    },
+    "complexValue": {
+      "type": "null"
+    },
+    "measurement": {
+
     },
     "age": {
       "type": "object",
