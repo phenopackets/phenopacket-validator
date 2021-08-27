@@ -42,9 +42,19 @@
       "items": { "$ref": "#/definitions/measurement" },
       "minItems": 0
     },
+    "biosamples": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/biosample" },
+      "minItems": 0
+    },
     "interpretations": {
       "type": "array",
       "items": { "$ref": "#/definitions/interpretation" },
+      "minItems": 0
+    },
+    "diseases": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/disease" },
       "minItems": 0
     },
     "files": {
@@ -68,6 +78,13 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/resource"
+          },
+          "minItems": 1
+        },
+        "updates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/update"
           },
           "minItems": 1
         },
@@ -136,6 +153,16 @@
         {"type": "string", "format": "date-time"},
         {"$ref": "#/definitions/timeInterval"}
       ]
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "timestamp": {"type": "string", "format": "date-time"},
+        "updatedBy": {"type": "string"},
+        "comment": {"type": "string"}
+      },
+      "required": ["timestamp"],
+      "additionalProperties": false
     },
     "phenotypicFeature": {
       "type": "object",
@@ -293,6 +320,19 @@
       },
       "required": ["disease"]
     },
+    "disease": {
+      "type": "object",
+      "properties": {
+        "term": { "$ref": "#/definitions/ontologyClass"},
+        "excluded": {"type": "boolean"},
+        "onset": { "$ref":  "#/definitions/timeElement"},
+        "resolution": { "$ref":  "#/definitions/timeElement"},
+        "diseaseStage": { "$ref":  "#/definitions/ontologyClass"},
+        "clinicalTnmFinding": { "$ref":  "#/definitions/ontologyClass"},
+        "primarySite": { "$ref":  "#/definitions/ontologyClass"},
+        "laterality": { "$ref":  "#/definitions/ontologyClass"}
+      }
+    },
     "interpretation": {
       "type": "object",
       "properties": {
@@ -304,6 +344,54 @@
     },
       "variationInterpretation" : {
           "oneOf": [{"$ref": "#/definitions/geneDescriptor"}, {"$ref": "#/definitions/geneDescriptor"}]
+    },
+    "procedure": {
+      "type": "object",
+      "properties": {
+        "code": {"$ref": "#/definitions/ontologyClass"},
+        "bodySite": {"$ref": "#/definitions/ontologyClass"},
+        "performed": {"$ref": "#/definitions/timeElement"}
+      },
+      "required": ["code"],
+      "additionalProperties": false
+    },
+    "biosample": {
+      "type": "object",
+      "properties": {
+          "id": {"type": "string"},
+          "individualId": {"type": "string"},
+          "derivedFromId": {"type": "string"},
+          "description": {"type": "string"},
+          "sampledTissue": {"$ref": "#/definitions/ontologyClass"},
+          "sampledType": {"$ref": "#/definitions/ontologyClass"},
+         "phenotypicFeatures": {"type": "array",
+            "items": { "$ref": "#/definitions/phenotypicFeature"}
+          },
+        "measurements": {"type": "array",
+          "items": { "$ref": "#/definitions/measurement"}
+        },
+        "taxonomy": {"$ref": "#/definitions/ontologyClass"},
+        "timeOfCollection": { "$ref": "#/definitions/timeElement"},
+        "histologicalDiagnosis": {"$ref": "#/definitions/ontologyClass"},
+        "tumorProgression": {"$ref": "#/definitions/ontologyClass"},
+        "tumorGrade": {"$ref": "#/definitions/ontologyClass"},
+        "pathologicalStage": {"$ref": "#/definitions/ontologyClass"},
+        "pathologicalTnmFinding": {"type": "array",
+          "items": { "$ref": "#/definitions/ontologyClass"}
+        },
+        "diagnosticMarkers": {"type": "array",
+          "items": { "$ref": "#/definitions/ontologyClass"}
+        },
+        "procedure": {"$ref": "#/definitions/procedure"},
+        "files": {"type": "array",
+          "items": { "$ref": "#/definitions/file"}
+        },
+        "materialSample": {"$ref": "#/definitions/ontologyClass"},
+        "sampleProcessing": {"$ref": "#/definitions/ontologyClass"},
+        "sampleStorage": {"$ref": "#/definitions/ontologyClass"}
+      },
+      "required": ["id"],
+      "additionalProperties": false
     },
     "resource": {
       "type": "object",
