@@ -39,9 +39,7 @@ public class CoreValidator {
             case RARE_DISEASE_VALIDATION:
                 ConfigFileValidator validator = new DefaultRareDiseaseConfigValidator(phenopacket);
                 List<ValidationItem> specErrors = validator.validate();
-                for (ValidationItem item : specErrors) {
-                    validationErrors.add(item);
-                }
+                validationErrors.addAll(specErrors);
                 validationErrors.addAll(specErrors);
                 break;
         }

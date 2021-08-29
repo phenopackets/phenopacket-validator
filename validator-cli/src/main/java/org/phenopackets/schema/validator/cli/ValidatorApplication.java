@@ -1,7 +1,6 @@
 package org.phenopackets.schema.validator.cli;
 
 import org.phenopackets.schema.validator.core.jsonschema.JsonSchemaValidator;
-import org.phenopackets.schema.validator.core.jsonschema.JsonValidationError;
 import org.phenopackets.schema.validator.core.validation.ValidationItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

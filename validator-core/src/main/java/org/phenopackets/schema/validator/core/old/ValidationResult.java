@@ -7,6 +7,7 @@ import java.util.Objects;
  *
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
  */
+@Deprecated
 public class ValidationResult {
 
     private enum Status {PASS, FAIL}

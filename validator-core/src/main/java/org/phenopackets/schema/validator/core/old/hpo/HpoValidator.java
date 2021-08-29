@@ -1,5 +1,5 @@
 package org.phenopackets.schema.validator.core.old.hpo;
-
+/*
 import com.google.common.collect.ImmutableList;
 import org.phenopackets.schema.v1.PhenoPacket;
 import org.phenopackets.schema.v1.core.MetaData;
@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toList;
  * Class for validating HPO terms in a {@link org.phenopackets.schema.v1.PhenoPacket}.
  *
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
- */
+
 @Deprecated
 public class HpoValidator implements Validator<PhenoPacket> {
 
@@ -84,3 +84,4 @@ public class HpoValidator implements Validator<PhenoPacket> {
     }
 
 }
+*/

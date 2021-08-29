@@ -8,8 +8,6 @@ import java.util.List;
 
 public class DefaultRareDiseaseConfigValidator implements ConfigFileValidator {
 
-    private File phenopacketFile;
-
     public DefaultRareDiseaseConfigValidator(File phenopacketFile) {
         // ingest the rare disease config
         InputStream is = getClass().getClassLoader().getResourceAsStream("config/rare-disease-default.properties");
@@ -22,7 +20,6 @@ public class DefaultRareDiseaseConfigValidator implements ConfigFileValidator {
             throw new PhenopacketValidatorRuntimeException("Could not load rare-disease-default.properties");
         }
 
-        this.phenopacketFile = phenopacketFile;
     }
 
 
