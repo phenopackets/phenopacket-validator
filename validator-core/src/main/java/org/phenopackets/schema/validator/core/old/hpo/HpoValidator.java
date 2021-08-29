@@ -1,11 +1,11 @@
-package org.phenopackets.schema.validator.core.hpo;
+package org.phenopackets.schema.validator.core.old.hpo;
 
 import com.google.common.collect.ImmutableList;
 import org.phenopackets.schema.v1.PhenoPacket;
 import org.phenopackets.schema.v1.core.MetaData;
 import org.phenopackets.schema.v1.core.Resource;
 import org.phenopackets.schema.validator.core.ValidationResult;
-import org.phenopackets.schema.validator.core.Validator;
+import org.phenopackets.schema.validator.core.old.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
  */
+@Deprecated
 public class HpoValidator implements Validator<PhenoPacket> {
 
     private static final Logger logger = LoggerFactory.getLogger(HpoValidator.class);

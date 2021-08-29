@@ -1,4 +1,4 @@
-package org.phenopackets.schema.validator.core.hpo;
+package org.phenopackets.schema.validator.core.old.hpo;
 
 import org.junit.jupiter.api.Test;
 import org.phenopackets.schema.v1.PhenoPacket;

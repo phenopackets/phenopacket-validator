@@ -1,5 +1,7 @@
 package org.phenopackets.schema.validator.core;
 
+import org.phenopackets.schema.validator.core.old.Validator;
+
 import java.util.Objects;
 
 /**
