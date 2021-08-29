@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.phenopackets.schema.v1.PhenoPacket;
 import org.phenopackets.schema.v1.core.MetaData;
 import org.phenopackets.schema.v1.core.Resource;
-import org.phenopackets.schema.validator.core.ValidationResult;
+import org.phenopackets.schema.validator.core.old.ValidationResult;
 import org.phenopackets.schema.validator.core.old.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

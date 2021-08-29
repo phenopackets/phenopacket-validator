@@ -19,7 +19,7 @@
 
     <properties>
         <protobuf.version>3.5.1</protobuf.version>
-        <phenopacket-schema.version>0.1.0</phenopacket-schema.version>
+        <phenopacket-schema.version>1.0.0</phenopacket-schema.version>
     </properties>
 
     <dependencies>
@@ -85,10 +85,10 @@
 </build>
 
 
-    <repositories>
+  <!--  <repositories>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-    </repositories>
+    </repositories> -->
 </project>

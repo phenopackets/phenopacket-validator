@@ -62,8 +62,8 @@ public class JsonSchemaValidator implements PhenopacketValidator {
      * @return List of {@link JsonValidationError} objects (empty list if there were no errors)
      */
     @Override
-    public List<? extends ValidationItem> validate() {
-        List<JsonValidationError> errors = new ArrayList<>();
+    public List<ValidationItem> validate() {
+        List<ValidationItem> errors = new ArrayList<>();
         try {
             InputStream jsonStream = new FileInputStream(jsonFile);
             JsonNode json = objectMapper.readTree(jsonStream);

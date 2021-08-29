@@ -1,6 +1,4 @@
-package org.phenopackets.schema.validator.core;
-
-import org.phenopackets.schema.validator.core.old.Validator;
+package org.phenopackets.schema.validator.core.old;
 
 import java.util.Objects;
 

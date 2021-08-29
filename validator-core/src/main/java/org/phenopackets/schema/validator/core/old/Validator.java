@@ -1,7 +1,6 @@
 package org.phenopackets.schema.validator.core.old;
 
 import com.google.protobuf.Message;
-import org.phenopackets.schema.validator.core.ValidationResult;
 
 import java.util.List;
 

@@ -2,6 +2,7 @@ package org.phenopackets.schema.validator.cli;
 
 import org.phenopackets.schema.validator.core.jsonschema.JsonSchemaValidator;
 import org.phenopackets.schema.validator.core.jsonschema.JsonValidationError;
+import org.phenopackets.schema.validator.core.validation.ValidationItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -34,7 +35,7 @@ public class ValidatorApplication implements CommandLineRunner {
             System.err.println("[USAGE] java -jar xx.jar phenopacket1 [phenopacket2 ....]");
             return;
         }
-        JsonSchemaValidator validator = new JsonSchemaValidator();
+
         for (String phenopacket: args) {
             File f = new File(phenopacket);
             if (! f.isFile()) {
@@ -42,11 +43,12 @@ public class ValidatorApplication implements CommandLineRunner {
                 continue;
             }
             System.out.printf("Validating %s\n", f.getAbsoluteFile());
-            List<JsonValidationError> errors = validator.validate(phenopacket);
+            JsonSchemaValidator validator = new JsonSchemaValidator(new File(phenopacket));
+            List<? extends ValidationItem> errors = validator.validate();
             if (errors.isEmpty()) {
                 System.out.println("\t no errors found");
             } else {
-                for (JsonValidationError ve : errors) {
+                for (ValidationItem ve : errors) {
                     System.out.println("\t(" + ve.errorType() +") " +  ve.message());
 
                 }

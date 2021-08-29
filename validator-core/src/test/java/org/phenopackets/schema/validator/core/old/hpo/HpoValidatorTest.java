@@ -3,13 +3,14 @@ package org.phenopackets.schema.validator.core.old.hpo;
 import org.junit.jupiter.api.Test;
 import org.phenopackets.schema.v1.PhenoPacket;
 import org.phenopackets.schema.v1.core.Individual;
-import org.phenopackets.schema.validator.core.ValidationResult;
+import org.phenopackets.schema.validator.core.old.ValidationResult;
 
 import java.util.List;
 
 /**
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
  */
+@Deprecated
 class HpoValidatorTest {
 
     @Test

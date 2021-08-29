@@ -8,6 +8,6 @@ import java.util.List;
  */
 public interface PhenopacketValidator {
 
-    public List<? extends ValidationItem> validate();
+    public List<ValidationItem> validate();
 
 }
