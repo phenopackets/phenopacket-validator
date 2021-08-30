@@ -1,10 +1,12 @@
 package org.phenopackets.schema.validator.core.configval;
 
 import org.junit.jupiter.api.Test;
+import org.phenopackets.schema.validator.core.validation.ValidationItem;
 
 import java.io.File;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RdConfigTest {
 
@@ -24,10 +26,11 @@ public class RdConfigTest {
     public void testLackOfPhenopacketSubject() {
         File simplePhenopacket = fileFromClasspath("json/validSimplePhenopacket.json");
         DefaultRareDiseaseConfigValidator validator = new DefaultRareDiseaseConfigValidator(simplePhenopacket);
-        for (var r: validator.validate()) {
+        List<ValidationItem> errors = validator.validate();
+        for (var r: errors) {
             System.out.println(r);
         }
-        assertNotNull(validator);
+        assertEquals(1, errors.size());
 
     }
 

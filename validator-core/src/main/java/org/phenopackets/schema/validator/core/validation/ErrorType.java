@@ -7,7 +7,10 @@ public enum ErrorType {
     JSON_ADDITIONAL_PROPERTIES("additionalProperties"),
     /** JSON schema error meaning that the JSON code failed to contain a property required by the schema. */
     JSON_REQUIRED("required"),
-    PHENOPACKET_LACKS_SUBJECT("phenopacket lacks subject");
+    PHENOPACKET_SUBJECT_LACKS_AGE("phenopacket subject lacks age"),
+    PHENOPACKET_LACKS_SUBJECT("phenopacket lacks subject"),
+    INVALID_ONTOLOGY("invalid ontology"),
+    PHENOPACKET_LACKS_PHENOTYPIC_FEATURE("phenopacket lacks phenotypic feature");
 
     private final String name;
 

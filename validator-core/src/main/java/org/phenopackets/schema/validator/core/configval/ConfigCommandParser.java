@@ -37,7 +37,6 @@ public class ConfigCommandParser {
                 String msg = String.format("[ERROR] Malformed line with %d (instead of the expected 2) fields: %s", fields.length, line);
                 throw new PhenopacketValidatorRuntimeException(msg);
             }
-            System.out.println(line);
             ConfigSubject configSubject = ConfigSubject.stringToEnum(subject);
             if (action.startsWith("allowedOntologies")) {
                 String prefix = getAllowedPrefix(action);

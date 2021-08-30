@@ -1,6 +1,6 @@
 package org.phenopackets.schema.validator.core.configval;
 
-import org.phenopackets.schema.v1.Phenopacket;
+import org.phenopackets.schema.v2.Phenopacket;
 import org.phenopackets.schema.validator.core.except.PhenopacketValidatorRuntimeException;
 import org.phenopackets.schema.validator.core.validation.ValidationItem;
 
@@ -12,7 +12,9 @@ public class DefaultRareDiseaseConfigValidator implements ConfigFileValidator {
 
     private final List<ConfigCommand> commands;
 
-
+    public List<ValidationItem> getErrors() {
+        return errors;
+    }
 
     private final Phenopacket phenopacket;
 
@@ -32,21 +34,9 @@ public class DefaultRareDiseaseConfigValidator implements ConfigFileValidator {
 
     @Override
     public List<ValidationItem> validate() {
-
-        for (ConfigCommand configCommand : commands) {
-            switch(configCommand.getSubject()) {
-                case PHENOPACKET_SUBJECT:
-                    constrainPhenopacketSubject(configCommand);
-            }
-        }
-
-        return List.of();
+        ConfigCommandValidator configCommandValidator = new ConfigCommandValidator(phenopacket);
+        return configCommandValidator.getErrors();
     }
 
-    private void constrainPhenopacketSubject(ConfigCommand configCommand) {
-        if (! phenopacket.hasSubject()) {
-           errors.add(ConfigValidationError.phenopacketLacksSubject());
 
-        }
-    }
 }

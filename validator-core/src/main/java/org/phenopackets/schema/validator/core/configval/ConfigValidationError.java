@@ -34,6 +34,14 @@ public class ConfigValidationError implements ValidationItem {
         return new ConfigValidationError(ErrorType.PHENOPACKET_LACKS_SUBJECT);
     }
 
+    public static ConfigValidationError phenopacketSubjectLacksAge() {
+        return new ConfigValidationError(ErrorType.PHENOPACKET_SUBJECT_LACKS_AGE);
+    }
+
+    public static ConfigValidationError phenopacketLacksPhenotypicFeature() {
+        return new ConfigValidationError(ErrorType.PHENOPACKET_LACKS_PHENOTYPIC_FEATURE);
+    }
+
 
     @Override
     public ErrorType errorType() {
@@ -55,5 +63,10 @@ public class ConfigValidationError implements ValidationItem {
         if (! (obj instanceof ConfigValidationError)) return false;
         ConfigValidationError that = (ConfigValidationError) obj;
         return this.message.equals(that.message) && this.errorType.equals(that.errorType);
+    }
+
+    @Override
+    public String toString() {
+        return "[ConfigValidationError] " + this.errorType.name() + ": " + this.message;
     }
 }

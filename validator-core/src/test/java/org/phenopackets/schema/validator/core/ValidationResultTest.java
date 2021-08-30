@@ -1,10 +1,7 @@
 package org.phenopackets.schema.validator.core;
 
 import org.junit.jupiter.api.Test;
-import org.phenopackets.schema.validator.core.old.ValidationResult;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
