@@ -6,7 +6,8 @@ public enum ErrorType {
     /** JSON schema error meaning that the JSON code contained a property not present in the schema. */
     JSON_ADDITIONAL_PROPERTIES("additionalProperties"),
     /** JSON schema error meaning that the JSON code failed to contain a property required by the schema. */
-    JSON_REQUIRED("required");
+    JSON_REQUIRED("required"),
+    PHENOPACKET_LACKS_SUBJECT("phenopacket lacks subject");
 
     private final String name;
 
@@ -29,6 +30,5 @@ public enum ErrorType {
             default:
                 throw new PhenopacketValidatorRuntimeException("Did not recognize error type: \"" + error + "\"");
         }
-
     }
 }

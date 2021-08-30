@@ -21,6 +21,19 @@ public class ConfigValidationError implements ValidationItem {
         this.message = message;
     }
 
+    /**
+     * This constructor can be used for simple errors where the message is take from the ErrorType alone
+     * @param errorType
+     */
+    public ConfigValidationError(ErrorType errorType) {
+        this.errorType = errorType;
+        this.message = errorType.name();
+    }
+
+    public static ConfigValidationError phenopacketLacksSubject() {
+        return new ConfigValidationError(ErrorType.PHENOPACKET_LACKS_SUBJECT);
+    }
+
 
     @Override
     public ErrorType errorType() {
