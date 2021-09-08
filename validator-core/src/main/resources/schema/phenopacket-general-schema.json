@@ -666,7 +666,7 @@
             "$ref": "#/definitions/doseInterval"
           }
         },
-        "drug_type": {
+        "drugType": {
           "enum": [
             "UNKNOWN_DRUG_TYPE",
             "PRESCRIPTION",
