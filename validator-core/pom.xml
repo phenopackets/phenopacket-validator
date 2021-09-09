@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.phenopackets.phenopacket-schema</groupId>
         <artifactId>validator</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>validator-core</artifactId>

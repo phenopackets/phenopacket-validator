@@ -16,7 +16,7 @@ import java.util.List;
  * @author Jules Jacobsen <j.jacobsen@qmul.ac.uk>
  */
 @SpringBootApplication
-public class ValidatorApplication implements CommandLineRunner {
+public class ValidatorApplication  {
 
     private static Logger LOG = LoggerFactory
             .getLogger(ValidatorApplication.class);
@@ -27,34 +27,5 @@ public class ValidatorApplication implements CommandLineRunner {
         LOG.info("APPLICATION FINISHED");
     }
 
-    @Override
-    public void run(String... args) {
-        LOG.info("EXECUTING : command line runner");
-        if (args.length < 1) {
-            System.err.println("[USAGE] java -jar xx.jar phenopacket1 [phenopacket2 ....]");
-            return;
-        }
 
-        for (String phenopacket: args) {
-            File f = new File(phenopacket);
-            if (! f.isFile()) {
-                System.err.println("[ERROR] Could not find file " + phenopacket);
-                continue;
-            }
-            System.out.printf("Validating %s\n", f.getAbsoluteFile());
-            JsonSchemaValidator validator = new JsonSchemaValidator(new File(phenopacket));
-            List<? extends ValidationItem> errors = validator.validate();
-            if (errors.isEmpty()) {
-                System.out.println("\t no errors found");
-            } else {
-                for (ValidationItem ve : errors) {
-                    System.out.println("\t(" + ve.errorType() +") " +  ve.message());
-
-                }
-            }
-        }
-        for (int i = 0; i < args.length; ++i) {
-            LOG.info("args[{}]: {}", i, args[i]);
-        }
-    }
 }
