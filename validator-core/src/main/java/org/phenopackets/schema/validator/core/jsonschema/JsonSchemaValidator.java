@@ -10,7 +10,7 @@ import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 import org.phenopackets.schema.validator.core.except.PhenopacketValidatorRuntimeException;
-import org.phenopackets.schema.validator.core.validation.PhenopacketValidator;
+import org.phenopackets.schema.validator.core.validation.JsonValidator;
 import org.phenopackets.schema.validator.core.validation.ValidationItem;
 
 import java.io.File;
@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.Set;
 
 
-public class JsonSchemaValidator implements PhenopacketValidator {
+public class JsonSchemaValidator implements JsonValidator {
 
-    private JsonSchema phenopacketsBaseSchema;
-    private  ObjectMapper objectMapper = new ObjectMapper();
+    protected JsonSchema jsonSchema;
+    protected  ObjectMapper objectMapper = new ObjectMapper();
     /** The latest version of the spec that is supported by our JSON SCHEMA library is 2019/09. */
-    private static final SpecVersion.VersionFlag VERSION_FLAG = SpecVersion.VersionFlag.V201909;
-    private File jsonFile;
+    protected static final SpecVersion.VersionFlag VERSION_FLAG = SpecVersion.VersionFlag.V201909;
+    protected File jsonFile;
 
     /**
      * Constructor for validation using JSON Schema
@@ -41,19 +41,23 @@ public class JsonSchemaValidator implements PhenopacketValidator {
         JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance(VERSION_FLAG);
         try {
             InputStream baseSchemaStream = inputStreamFromClasspath("schema/phenopacket-general-schema.json");
-            this.phenopacketsBaseSchema = schemaFactory.getSchema(baseSchemaStream);
+            this.jsonSchema = schemaFactory.getSchema(baseSchemaStream);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public JsonSchemaValidator() {
+
+    }
+
 
     /**
      * Get a resource from the maven src/main/resources directory
-     * @param path
-     * @return
+     * @param path Path to a file resource
+     * @return corresponding input stream
      */
-    private static InputStream inputStreamFromClasspath(String path) {
+    protected static InputStream inputStreamFromClasspath(String path) {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
     }
 
@@ -67,7 +71,7 @@ public class JsonSchemaValidator implements PhenopacketValidator {
         try {
             InputStream jsonStream = new FileInputStream(jsonFile);
             JsonNode json = objectMapper.readTree(jsonStream);
-            Set<ValidationMessage> validationResult = phenopacketsBaseSchema.validate(json);
+            Set<ValidationMessage> validationResult = jsonSchema.validate(json);
             if (! validationResult.isEmpty()) {
                 validationResult.forEach(e -> errors.add(new JsonValidationError(e)));
             }

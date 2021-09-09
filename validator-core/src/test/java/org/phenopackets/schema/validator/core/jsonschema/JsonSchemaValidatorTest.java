@@ -29,10 +29,9 @@ public class JsonSchemaValidatorTest {
     /**
      * This example phenopacket does not contain anything except {"disney" : "donald"}
      * It does not contain an id or a metaData element and thus should fail.
-     * @throws IOException
      */
     @Test
-    public void testValidationOfSimpleInValidPhenopacket() throws IOException {
+    public void testValidationOfSimpleInValidPhenopacket() {
         File invalidSimplePhenopacket = fileFromClasspath("json/invalidSimplePhenopacket.json");
         JsonSchemaValidator validator = new JsonSchemaValidator(invalidSimplePhenopacket);
         List<? extends ValidationItem> errors = validator.validate();

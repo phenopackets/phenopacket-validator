@@ -16,19 +16,31 @@
           "description": "An arbitrary identifier for the subject of the Phenopacket",
           "type": "string"
         },
-        "alternate_ids": {
+        "alternateIds": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "__comment": "# TODO CURIE not PLAIN STRING????...",
           "minItems": 0,
           "uniqueItems": true
-        }
-      },
-      "date_of_birth": {
-        "type": "string",
-        "format": "date-time"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "timeAtLastEncounter": {
+          "$ref": "#/definitions/timeElement"
+        },
+        "vitalStatus": {
+          "enum": ["UNKNOWN_STATUS", "ALIVE", "DECEASED"]
+        },
+        "sex": {
+          "enum": ["UNKNOWN_SEX", "FEMALE", "MALE", "UNKNOWN_SEX"]
+        },
+        "karyotypicSex": {
+          "enum": ["UNKNOWN_KARYOTYPE", "XX", "XY", "XO", "XXY","XXX","XXYY", "XXXY", "XXXX", "XYY", "OTHER_KARYOTYPE"]
+        },
+        "taxonomy": {"$ref": "#/definitions/ontologyClass"}
       },
       "required": ["id"]
     },
@@ -118,7 +130,9 @@
           "description": "human-readable, class name",
           "type": "string"
         }
-      }
+      },
+      "required": ["id", "label"],
+      "additionalProperties": false
     },
     "gestationalAge": {
       "type": "object",
@@ -165,26 +179,20 @@
       }
     },
     "timeElement": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/gestationalAge"
-        },
-        {
-          "$ref": "#/definitions/age"
-        },
-        {
-          "$ref": "#/definitions/ageRange"
-        },
-        {
-          "$ref": "#/definitions/ontologyClass"
-        },
-        {
-          "type": "string",
-          "format": "date-time"
-        },
-        {
-          "$ref": "#/definitions/timeInterval"
-        }
+      "properties": {
+          "gestationalAge":  {"$ref": "#/definitions/gestationalAge"},
+          "age" : {"$ref": "#/definitions/age"},
+          "ageRange": {   "$ref": "#/definitions/ageRange"},
+        "ontologyClass": { "$ref": "#/definitions/ontologyClass"},
+        "timestamp": { "type": "string", "format": "date-time"},
+        "timeInterval": {"$ref": "#/definitions/timeInterval"}
+      },
+      "oneOf": [ { "required": [ "gestationalAge" ]},
+        { "required": [ "age" ]},
+        { "required": [ "ageRange"]},
+        { "required": [ "ontologyClass" ]},
+        { "required": [ "timestamp" ]},
+        { "required": [ "timeInterval" ]}
       ]
     },
     "update": {
@@ -284,8 +292,12 @@
     },
     "value": {
       "oneOf": [
-        { "$ref": "#/definitions/ontologyClass" },
-        { "$ref": "#/definitions/quantity" }
+        {
+          "$ref": "#/definitions/ontologyClass"
+        },
+        {
+          "$ref": "#/definitions/quantity"
+        }
       ]
     },
     "complexValue": {
@@ -412,8 +424,12 @@
         },
         "variationInterpretation": {
           "oneOf": [
-            { "$ref": "#/definitions/geneDescriptor" },
-            { "$ref": "#/definitions/geneDescriptor" }
+            {
+              "$ref": "#/definitions/geneDescriptor"
+            },
+            {
+              "$ref": "#/definitions/geneDescriptor"
+            }
           ]
         }
       }
@@ -490,8 +506,12 @@
     },
     "variationInterpretation": {
       "oneOf": [
-        { "$ref": "#/definitions/geneDescriptor" },
-        { "$ref": "#/definitions/geneDescriptor" }
+        {
+          "$ref": "#/definitions/geneDescriptor"
+        },
+        {
+          "$ref": "#/definitions/geneDescriptor"
+        }
       ]
     },
     "procedure": {
@@ -718,7 +738,7 @@
             {
               "$ref": "#/definitions/externalReference"
             }
-          ],
+          ]},
           "startTime": {
             "$ref": "#/definitions/timeElement"
           },
@@ -733,7 +753,6 @@
               "DISCONTINUED"
             ]
           }
-        }
       },
       "required": [
         "identifier"
@@ -743,25 +762,43 @@
     "medicalAction": {
       "type": "object",
       "properties": {
-          "action": {
-            "type": "object",
-            "anyOf": [
-            { "$ref": "#/definitions/procedure" },
-            { "$ref": "#/definitions/treatment" },
-            { "$ref": "#/definitions/radiationTherapy" },
-            { "$ref": "#/definitions/therapeuticRegimen" }
-            ]
-          },
-        "treatmentTarget":  { "$ref": "#/definitions/ontologyClass" },
-        "treatmentIntent": 	 { "$ref": "#/definitions/ontologyClass" },
-        "responseToTreatment": 	{ "$ref": "#/definitions/ontologyClass" },
+        "treatment": {
+          "$ref": "#/definitions/treatment"
+        },
+        "procedure": {
+          "$ref": "#/definitions/procedure"
+        },
+        "radiationTherapy": {
+          "$ref": "#/definitions/radiationTherapy"
+        },
+        "therapeuticRegimen": {
+          "$ref": "#/definitions/therapeuticRegimen"
+        },
+        "treatmentTarget": {
+          "$ref": "#/definitions/ontologyClass"
+        },
+        "treatmentIntent": {
+          "$ref": "#/definitions/ontologyClass"
+        },
+        "responseToTreatment": {
+          "$ref": "#/definitions/ontologyClass"
+        },
         "adverseEvents": {
           "type": "array",
-          "items": { "$ref": "#/definitions/ontologyClass" }
+          "items": {
+            "$ref": "#/definitions/ontologyClass"
+          }
         },
-        "treatmentTerminationReason": { "$ref": "#/definitions/ontologyClass" }
+        "treatmentTerminationReason": {
+          "$ref": "#/definitions/ontologyClass"
+        }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "oneOf": [ { "required": [ "procedure" ]},
+        { "required": [ "radiationTherapy" ]},
+        { "required": [ "therapeuticRegimen"]},
+        { "required": [ "treatment" ]}
+      ]
     }
   }
 }
