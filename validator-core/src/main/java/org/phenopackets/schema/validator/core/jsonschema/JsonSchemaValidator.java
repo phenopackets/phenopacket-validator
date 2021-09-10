@@ -9,92 +9,75 @@ import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
+import org.phenopackets.schema.validator.core.except.PhenopacketValidatorRuntimeException;
+import org.phenopackets.schema.validator.core.validation.JsonValidator;
+import org.phenopackets.schema.validator.core.validation.ValidationItem;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 
-public class JsonSchemaValidator {
+public class JsonSchemaValidator implements JsonValidator {
 
-    private JsonSchema phenopacketsBaseSchema;
-    private  ObjectMapper objectMapper = new ObjectMapper();
-
-    public JsonSchemaValidator() {
-        JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
-        try {
-            InputStream baseSchemaStream = inputStreamFromClasspath("schema/phenopacket-general-schema.json");
-            this.phenopacketsBaseSchema = schemaFactory.getSchema(baseSchemaStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    protected JsonSchema jsonSchema;
+    protected  ObjectMapper objectMapper = new ObjectMapper();
+    /** The latest version of the spec that is supported by our JSON SCHEMA library is 2019/09. */
+    protected static final SpecVersion.VersionFlag VERSION_FLAG = SpecVersion.VersionFlag.V201909;
+    protected File jsonFile;
 
     /**
-     * Validate the file at fpath (assumed to be a Phenopacket formated in JSON) using the
-     * base validation schema
-     * @param fpath Path to a Phenopacket
-     * @return List of {@link ValidationError} objects (empty list if there were no errors)
+     * Constructor for validation using JSON Schema
+     * @param f a JSON file.
      */
-    public List<ValidationError> validate(String fpath) {
-        List<ValidationError> errors = new ArrayList<>();
+    public JsonSchemaValidator(File f) {
+        this.jsonFile = f;
+        if (! f.isFile()) {
+            throw new PhenopacketValidatorRuntimeException("Could not open file at \"" + f.getAbsolutePath() + "\"");
+        }
+        JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance(VERSION_FLAG);
         try {
-            File f = new File(fpath);
-            if (! f.isFile()) {
-                throw new RuntimeException("Could not open file at \"" + f.getAbsolutePath() + "\"");
-            }
-            InputStream jsonStream = new FileInputStream(fpath);
-            JsonNode json = objectMapper.readTree(jsonStream);
-            Set<ValidationMessage> validationResult = phenopacketsBaseSchema.validate(json);
-            if (! validationResult.isEmpty()) {
-                validationResult.forEach(e -> errors.add(new ValidationError(e)));
-            }
+            InputStream baseSchemaStream = inputStreamFromClasspath("schema/phenopacket-general-schema.json");
+            this.jsonSchema = schemaFactory.getSchema(baseSchemaStream);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return errors;
     }
 
+    public JsonSchemaValidator() {
 
-    // TODO
-    private List<ValidationError> validateWithAdditionalSchema(String fpath, String additionalSchemaPath) {
-        List<ValidationError> errors = new ArrayList<>();
-        try {
-            File f = new File(fpath);
-            if (! f.isFile()) {
-                throw new RuntimeException("Could not open file at \"" + f.getAbsolutePath() + "\"");
-            }
-            InputStream jsonStream = new FileInputStream(fpath);
-            JsonNode json = objectMapper.readTree(jsonStream);
-            Set<ValidationMessage> validationResult = phenopacketsBaseSchema.validate(json);
-            if (! validationResult.isEmpty()) {
-                validationResult.forEach(e -> errors.add(new ValidationError(e)));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // Now validate against the additional schema
-        // ...
-        // add any new errors to the errors List.
-        return errors;
     }
-
 
 
     /**
      * Get a resource from the maven src/main/resources directory
-     * @param path
-     * @return
+     * @param path Path to a file resource
+     * @return corresponding input stream
      */
-    private static InputStream inputStreamFromClasspath(String path) {
+    protected static InputStream inputStreamFromClasspath(String path) {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
     }
 
-
+    /** Validate the file at fpath (assumed to be a Phenopacket formated in JSON) using the
+     * base validation schema
+     * @return List of {@link JsonValidationError} objects (empty list if there were no errors)
+     */
+    @Override
+    public List<ValidationItem> validate() {
+        List<ValidationItem> errors = new ArrayList<>();
+        try {
+            InputStream jsonStream = new FileInputStream(jsonFile);
+            JsonNode json = objectMapper.readTree(jsonStream);
+            Set<ValidationMessage> validationResult = jsonSchema.validate(json);
+            if (! validationResult.isEmpty()) {
+                validationResult.forEach(e -> errors.add(new JsonValidationError(e)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return errors;
+    }
 }
