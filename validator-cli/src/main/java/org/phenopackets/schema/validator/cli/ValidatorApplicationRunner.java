@@ -11,9 +11,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.util.List;
-
 @Component
 public class ValidatorApplicationRunner implements CommandLineRunner, ExitCodeGenerator {
     private static Logger LOG = LoggerFactory

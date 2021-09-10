@@ -6,14 +6,11 @@ import org.phenopackets.schema.validator.core.jsonschema.JsonSchemaValidator;
 import org.phenopackets.schema.validator.core.validation.ValidationItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
 
