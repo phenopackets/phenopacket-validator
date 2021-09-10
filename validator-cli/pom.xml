@@ -7,11 +7,11 @@
     <parent>
         <groupId>org.phenopackets.phenopacket-schema</groupId>
         <artifactId>validator</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>validator-cli</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>validator-cli</name>
@@ -36,6 +36,11 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli-spring-boot-starter</artifactId>
+            <version>4.6.1</version>
         </dependency>
     </dependencies>
 
