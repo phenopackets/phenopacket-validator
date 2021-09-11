@@ -11,17 +11,9 @@
     </parent>
 
     <artifactId>validator-cli</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
 
     <name>validator-cli</name>
     <description>Command-line utility for validating phenopackets</description>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -45,12 +37,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

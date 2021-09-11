@@ -11,16 +11,9 @@
     </parent>
 
     <artifactId>validator-core</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
 
     <name>validator-core</name>
     <description>Validator utilities for phenopackets</description>
-
-    <properties>
-        <protobuf.version>3.14.0</protobuf.version>
-        <phenopacket-schema.version>2.0.0</phenopacket-schema.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -57,54 +50,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-
-        <plugin>
-            <artifactId>maven-resources-plugin</artifactId>
-            <version>3.2.0</version>
-            <executions>
-                <execution>
-                    <id>copy-resources</id>
-                    <phase>validate</phase>
-                    <goals>
-                        <goal>copy-resources</goal>
-                    </goals>
-                    <configuration>
-                        <outputDirectory>${project.build.directory}/resources</outputDirectory>
-                        <resources>
-                            <resource>
-                                <directory>src/main/resources</directory>
-                                <!--Use filtering so that maven will replace placeholders
-                                  with values from the pom e.g. ${project.version} -->
-                                <filtering>true</filtering>
-                                <includes>
-                                    <include>schema</include>
-                                    <include>log4j2.xml</include>
-                                </includes>
-                            </resource>
-                        </resources>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                </configuration>
-            </plugin>
-        </plugins>
-
-</build>
-
-
-  <!--  <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories> -->
 </project>
