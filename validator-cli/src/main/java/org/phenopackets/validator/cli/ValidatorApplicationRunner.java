@@ -1,7 +1,5 @@
-package org.phenopackets.schema.validator.cli;
+package org.phenopackets.validator.cli;
 
-import org.phenopackets.schema.validator.core.jsonschema.JsonSchemaValidator;
-import org.phenopackets.schema.validator.core.validation.ValidationItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;

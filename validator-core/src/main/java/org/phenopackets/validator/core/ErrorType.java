@@ -1,6 +1,6 @@
-package org.phenopackets.schema.validator.core.validation;
+package org.phenopackets.validator.core;
 
-import org.phenopackets.schema.validator.core.except.PhenopacketValidatorRuntimeException;
+import org.phenopackets.validator.core.except.PhenopacketValidatorRuntimeException;
 
 public enum ErrorType {
     /** JSON schema error meaning that the JSON code contained a property not present in the schema. */
