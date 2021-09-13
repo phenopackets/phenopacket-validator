@@ -16,12 +16,6 @@
     <description>Validator utilities for phenopackets</description>
 
     <dependencies>
-        <dependency>
-            <groupId>com.networknt</groupId>
-            <artifactId>json-schema-validator</artifactId>
-            <version>1.0.42</version>
-        </dependency>
-
         <!-- Utility for inter-converting CURIEs and IRIs
             TODO - probably we can get rid of this dependency with a newer phenol version.
             It seems to "leak" from phenol or some other library and be required in the pom file
