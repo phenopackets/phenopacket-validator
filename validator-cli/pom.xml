@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.phenopackets.phenopacket-schema</groupId>
+        <groupId>org.phenopackets.validator</groupId>
         <artifactId>validator</artifactId>
         <version>0.1.1-SNAPSHOT</version>
     </parent>
@@ -17,8 +17,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.phenopackets.phenopacket-schema</groupId>
-            <artifactId>validator-core</artifactId>
+            <groupId>org.phenopackets.validator</groupId>
+            <artifactId>validator-jsonschema</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>

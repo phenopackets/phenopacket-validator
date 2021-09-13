@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.phenopackets.phenopacket-schema</groupId>
+    <groupId>org.phenopackets.validator</groupId>
     <artifactId>validator</artifactId>
     <version>0.1.1-SNAPSHOT</version>
 
@@ -13,6 +13,7 @@
     <modules>
         <module>validator-core</module>
         <module>validator-cli</module>
+        <module>validator-jsonschema</module>
     </modules>
 
     <parent>

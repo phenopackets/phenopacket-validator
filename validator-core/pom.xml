@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.phenopackets.phenopacket-schema</groupId>
+        <groupId>org.phenopackets.validator</groupId>
         <artifactId>validator</artifactId>
         <version>0.1.1-SNAPSHOT</version>
     </parent>
@@ -16,12 +16,6 @@
     <description>Validator utilities for phenopackets</description>
 
     <dependencies>
-        <dependency>
-            <groupId>org.phenopackets</groupId>
-            <artifactId>phenopacket-schema</artifactId>
-            <version>${phenopacket-schema.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>json-schema-validator</artifactId>
@@ -37,16 +31,6 @@
             <groupId>org.prefixcommons</groupId>
             <artifactId>curie-util</artifactId>
             <version>0.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>${protobuf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java-util</artifactId>
-            <version>${protobuf.version}</version>
         </dependency>
     </dependencies>
 

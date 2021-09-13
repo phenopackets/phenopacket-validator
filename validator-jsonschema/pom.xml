@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>validator</artifactId>
+        <groupId>org.phenopackets.validator</groupId>
+        <version>0.1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>validator-jsonschema</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.phenopackets.validator</groupId>
+            <artifactId>validator-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.networknt</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>1.0.42</version>
+        </dependency>
+
+        <!-- Utility for inter-converting CURIEs and IRIs
+            TODO - probably we can get rid of this dependency with a newer phenol version.
+            It seems to "leak" from phenol or some other library and be required in the pom file
+            although we do not explicitly use it.
+        -->
+        <dependency>
+            <groupId>org.prefixcommons</groupId>
+            <artifactId>curie-util</artifactId>
+            <version>0.0.2</version>
+        </dependency>
+
+
+        <!-- To load the test cases-->
+<!--        <dependency>-->
+<!--            <groupId>org.phenopackets</groupId>-->
+<!--            <artifactId>phenopacket-schema</artifactId>-->
+<!--            <version>${phenopacket-schema.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.google.protobuf</groupId>-->
+<!--            <artifactId>protobuf-java</artifactId>-->
+<!--            <version>${protobuf.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.google.protobuf</groupId>-->
+<!--            <artifactId>protobuf-java-util</artifactId>-->
+<!--            <version>${protobuf.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+    </dependencies>
+
+</project>
