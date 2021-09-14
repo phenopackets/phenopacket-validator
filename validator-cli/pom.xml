@@ -5,28 +5,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.phenopackets.phenopacket-schema</groupId>
+        <groupId>org.phenopackets.validator</groupId>
         <artifactId>validator</artifactId>
         <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>validator-cli</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
 
     <name>validator-cli</name>
     <description>Command-line utility for validating phenopackets</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-    </properties>
-
     <dependencies>
         <dependency>
-            <groupId>org.phenopackets.phenopacket-schema</groupId>
-            <artifactId>validator-core</artifactId>
+            <groupId>org.phenopackets.validator</groupId>
+            <artifactId>validator-jsonschema</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
