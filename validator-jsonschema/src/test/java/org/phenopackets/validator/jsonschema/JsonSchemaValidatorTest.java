@@ -2,9 +2,9 @@ package org.phenopackets.validator.jsonschema;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.DisplayNameGenerator.Simple;
 import org.phenopackets.schema.v2.Phenopacket;
-import org.phenopackets.validator.builder.SimplePhenopacket;
+import org.phenopackets.validator.testdatagen.RareDiseasePhenopacket;
+import org.phenopackets.validator.testdatagen.SimplePhenopacket;
 import org.phenopackets.validator.core.ErrorType;
 import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
@@ -23,6 +23,8 @@ public class JsonSchemaValidatorTest {
     private static final ClasspathJsonSchemaValidatorFactory FACTORY = ClasspathJsonSchemaValidatorFactory.defaultValidators();
 
     private static final SimplePhenopacket simplePhenopacket = new SimplePhenopacket();
+
+    private static final RareDiseasePhenopacket rareDiseasePhenopacket = new RareDiseasePhenopacket();
 
     private static File fileFromClasspath(String path) {
         String fname = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(path)).getPath();
@@ -74,8 +76,11 @@ public class JsonSchemaValidatorTest {
     public void testRareDiseaseBethlemahmValidPhenopacket() throws Exception {
         JsonSchemaValidator validator = FACTORY.getValidatorForType(ValidatorInfo.rareDiseaseValidation()).get();
 
-        File myopathyPhenopacket = fileFromClasspath("json/bethlehamMyopathyExample.json");
-        List<? extends ValidationItem> errors = validator.validate(myopathyPhenopacket);
+       // File myopathyPhenopacket = fileFromClasspath("json/bethlehamMyopathyExample.json");
+        
+        Phenopacket bethlehamMyopathy = rareDiseasePhenopacket.getPhenopacket();
+        String json =  JsonFormat.printer().print(bethlehamMyopathy);
+        List<? extends ValidationItem> errors = validator.validate(json);
 
         assertTrue(errors.isEmpty());
     }
