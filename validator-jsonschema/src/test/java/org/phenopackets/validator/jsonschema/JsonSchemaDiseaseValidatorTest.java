@@ -14,7 +14,6 @@ import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
 import org.phenopackets.validator.testdatagen.PhenopacketUtil;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
