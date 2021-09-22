@@ -32,7 +32,15 @@
           "$ref": "#/definitions/timeElement"
         },
         "vitalStatus": {
-          "enum": ["UNKNOWN_STATUS", "ALIVE", "DECEASED"]
+          "type": "object",
+          "properties": {
+            "status": {"enum": ["UNKNOWN_STATUS", "ALIVE", "DECEASED"]},
+            "timeOfDeath": {"$ref": "#/definitions/timeElement"},
+            "causeOfDeath": {"$ref": "#/definitions/ontologyClass"},
+            "survivalTimeInDays": "integer"
+          },
+          "required": [ "status"],
+        "additionalProperties": false
         },
         "sex": {
           "enum": ["UNKNOWN_SEX", "FEMALE", "MALE"]
