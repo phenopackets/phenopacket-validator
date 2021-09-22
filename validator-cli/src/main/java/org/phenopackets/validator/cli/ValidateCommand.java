@@ -26,15 +26,14 @@ public class ValidateCommand implements Callable<Integer> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidateCommand.class);
 
-    // TODO - do we need this as we accept 1..* phenopacket as positional arguments?
-//    @Option(names = {"-p","--phenopacket"}, description = "Path to phenopacket", required = true)
-//    public String phenopacketPath;
-
     @Option(names = "--rare", description = "apply HPO rare-disease constraints")
     public boolean rareHpoConstraints = false;
 
-    @Parameters(arity = "1..*", description = "one or more phenopacket files")
-    public List<File> phenopackets;
+    @Parameters(arity = "0..*", description = "one or more JSON Schema configuration files")
+    public List<File> jsonSchemaFiles = List.of();
+
+    @Option(names = {"-p", "--phenopacket"}, required = true, description = "Phenopacket file to be validated")
+    public String phenopacket;
 
     private final PhenopacketValidatorFactory phenopacketValidatorFactory;
 
@@ -51,36 +50,40 @@ public class ValidateCommand implements Callable<Integer> {
             LOGGER.info("Validating with HPO rare-disease constraints");
             validationTypes.add(ValidatorInfo.rareDiseaseValidation());
         }
+        File phenopacketFile = new File(phenopacket);
+        LOGGER.info("Validating {} phenopacket", phenopacketFile);
+        // TODO  -- adapt PhenopacketValidatorFactory to accept multiple JSON Schema files
+        for (File jsonSchema : jsonSchemaFiles) {
+            LOGGER.info("Adding configuration file at `{}`", jsonSchema.getAbsolutePath());
+        }
 
-        LOGGER.info("Validating {} phenopackets", phenopackets.size());
-
-
+        // poor man's formatting
+        LOGGER.info("");
+        LOGGER.info("--------------------------------------------------------------------------------");
+        LOGGER.info("");
         PhenopacketValidation validator = new PhenopacketValidation(phenopacketValidatorFactory);
+        try (InputStream in = Files.newInputStream(phenopacketFile.toPath())) {
 
-        for (File phenopacket : phenopackets) {
-            LOGGER.info("Validating phenopacket at `{}`", phenopacket.getAbsolutePath());
-
-            try (InputStream in = Files.newInputStream(phenopacket.toPath())) {
-
-                List<ValidationItem> validationItems = validator.validate(in, validationTypes.toArray(ValidatorInfo[]::new));
-                if (validationItems.isEmpty()) {
-                    LOGGER.info("No errors found");
-                } else {
-                    LOGGER.info("Found {} errors:", validationItems.size());
-                    for (ValidationItem item : validationItems) {
-                        LOGGER.info("({}) {}", item.errorType(), item.message());
-                    }
+            List<ValidationItem> validationItems = validator.validate(in, validationTypes.toArray(ValidatorInfo[]::new));
+            if (validationItems.isEmpty()) {
+                LOGGER.info("No errors found");
+            } else {
+                LOGGER.info("Found {} errors:", validationItems.size());
+                for (ValidationItem item : validationItems) {
+                    LOGGER.info("({}) {}", item.errorType(), item.message());
                 }
-
-            } catch (IOException e) {
-                LOGGER.warn("Error opening the phenopacket", e);
             }
 
-            // poor man's formatting
-            LOGGER.info("");
-            LOGGER.info("--------------------------------------------------------------------------------");
-            LOGGER.info("");
+        } catch (IOException e) {
+            LOGGER.warn("Error opening the phenopacket", e);
         }
+
+        // poor man's formatting
+        LOGGER.info("");
+        LOGGER.info("--------------------------------------------------------------------------------");
+        LOGGER.info("");
+
+
 
         return 0;
     }
