@@ -76,8 +76,6 @@ public class JsonSchemaValidatorTest {
     public void testRareDiseaseBethlemahmValidPhenopacket() throws Exception {
         JsonSchemaValidator validator = FACTORY.getValidatorForType(ValidatorInfo.rareDiseaseValidation()).get();
 
-       // File myopathyPhenopacket = fileFromClasspath("json/bethlehamMyopathyExample.json");
-        
         Phenopacket bethlehamMyopathy = rareDiseasePhenopacket.getPhenopacket();
         String json =  JsonFormat.printer().print(bethlehamMyopathy);
         List<? extends ValidationItem> errors = validator.validate(json);
