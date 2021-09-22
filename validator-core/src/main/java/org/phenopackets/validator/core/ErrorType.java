@@ -7,6 +7,8 @@ public enum ErrorType {
     JSON_ADDITIONAL_PROPERTIES("additionalProperties"),
     /** JSON schema error meaning that the JSON code failed to contain a property required by the schema. */
     JSON_REQUIRED("required"),
+    /** The type of an object is not as required by the schema, e.g., we get a string instead of an array. */
+    JSON_TYPE("type"),
     PHENOPACKET_SUBJECT_LACKS_AGE("phenopacket subject lacks age"),
     PHENOPACKET_LACKS_SUBJECT("phenopacket lacks subject"),
     INVALID_ONTOLOGY("invalid ontology"),
@@ -29,6 +31,7 @@ public enum ErrorType {
         switch (error) {
             case "additionalProperties": return JSON_ADDITIONAL_PROPERTIES;
             case "required": return JSON_REQUIRED;
+            case "type": return JSON_TYPE;
 
             default:
                 throw new PhenopacketValidatorRuntimeException("Did not recognize error type: \"" + error + "\"");

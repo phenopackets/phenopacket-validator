@@ -85,7 +85,7 @@ public class JsonSchemaValidator implements PhenopacketValidator {
             LOGGER.warn("Error while decoding JSON content: {}", e.getMessage(), e);
             return List.of();
         } catch (RuntimeException e) {
-            LOGGER.warn("Error while validating ");
+            LOGGER.warn("Error while validating: {}", e.getMessage());
             return List.of();
         }
     }
