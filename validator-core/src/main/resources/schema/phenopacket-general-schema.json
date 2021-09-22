@@ -187,20 +187,22 @@
       }
     },
     "timeElement": {
+      "type": "object",
       "properties": {
           "gestationalAge":  {"$ref": "#/definitions/gestationalAge"},
           "age" : {"$ref": "#/definitions/age"},
           "ageRange": {   "$ref": "#/definitions/ageRange"},
         "ontologyClass": { "$ref": "#/definitions/ontologyClass"},
         "timestamp": { "type": "string", "format": "date-time"},
-        "timeInterval": {"$ref": "#/definitions/timeInterval"}
+        "interval": {"$ref": "#/definitions/timeInterval"}
       },
+      "additionalProperties": false,
       "oneOf": [ { "required": [ "gestationalAge" ]},
         { "required": [ "age" ]},
         { "required": [ "ageRange"]},
         { "required": [ "ontologyClass" ]},
         { "required": [ "timestamp" ]},
-        { "required": [ "timeInterval" ]}
+        { "required": [ "interval" ]}
       ]
     },
     "update": {
