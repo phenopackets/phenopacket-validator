@@ -10,13 +10,13 @@ import java.util.Objects;
  * POJO to represent errors identified by JSON Schema validation.
  * @author Peter N Robinson
  */
-public final class JsonValidationError implements ValidationItem {
+public final class JsonValidationItem implements ValidationItem {
 
     private final ValidatorInfo validatorInfo;
     private final ErrorType errorType;
     private final String message;
 
-    public JsonValidationError(ValidatorInfo validatorInfo, ValidationMessage validationMessage) {
+    public JsonValidationItem(ValidatorInfo validatorInfo, ValidationMessage validationMessage) {
         this.validatorInfo = validatorInfo;
         this.errorType = ErrorType.stringToErrorType(validationMessage.getType());
         this.message = validationMessage.getMessage();
@@ -41,7 +41,7 @@ public final class JsonValidationError implements ValidationItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        JsonValidationError that = (JsonValidationError) o;
+        JsonValidationItem that = (JsonValidationItem) o;
         return Objects.equals(validatorInfo, that.validatorInfo) && errorType == that.errorType && Objects.equals(message, that.message);
     }
 

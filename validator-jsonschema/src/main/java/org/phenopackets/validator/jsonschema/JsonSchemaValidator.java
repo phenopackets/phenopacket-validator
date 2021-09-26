@@ -78,7 +78,7 @@ public class JsonSchemaValidator implements PhenopacketValidator {
         try {
             JsonNode json = objectMapper.readTree(inputStream);
             jsonSchema.validate(json)
-                    .forEach(e -> errors.add(new JsonValidationError(validatorInfo, e)));
+                    .forEach(e -> errors.add(new JsonValidationItem(validatorInfo, e)));
 
             return errors;
         } catch (IOException e) {

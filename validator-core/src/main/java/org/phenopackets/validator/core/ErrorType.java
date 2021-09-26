@@ -10,6 +10,8 @@ public enum ErrorType {
     /** The type of an object is not as required by the schema, e.g., we get a string instead of an array. */
     JSON_TYPE("type"),
     JSON_ENUM("todo"),
+    ONTOLOGY_INVALID_ID("Term id does not exist in ontology"),
+    ONTOLOGY_TERM_WITH_ALTERNATE_ID("Term id is not the primary id for this term"),
     PHENOPACKET_SUBJECT_LACKS_AGE("phenopacket subject lacks age"),
     PHENOPACKET_LACKS_SUBJECT("phenopacket lacks subject"),
     INVALID_ONTOLOGY("invalid ontology"),

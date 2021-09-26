@@ -14,6 +14,7 @@
         <module>validator-core</module>
         <module>validator-cli</module>
         <module>validator-jsonschema</module>
+        <module>validator-ontology</module>
     </modules>
 
     <parent>
