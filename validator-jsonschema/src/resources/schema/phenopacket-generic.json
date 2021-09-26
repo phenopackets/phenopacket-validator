@@ -477,7 +477,10 @@
           "$ref": "#/definitions/timeElement"
         },
         "diseaseStage": {
-          "$ref": "#/definitions/ontologyClass"
+          "type": "array",
+          "items": {
+            "$ref":  "#/definitions/ontologyClass"
+          }
         },
         "clinicalTnmFinding": {
           "$ref": "#/definitions/ontologyClass"

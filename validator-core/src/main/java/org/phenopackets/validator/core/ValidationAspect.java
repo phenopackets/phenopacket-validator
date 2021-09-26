@@ -1,6 +1,10 @@
 package org.phenopackets.validator.core;
 
 
+/*
+Probably this should go into error type, they have the same purpose
+ */
+@Deprecated
 public enum ValidationAspect {
 
     // This enum is supposed to be used instead of the ErrorType

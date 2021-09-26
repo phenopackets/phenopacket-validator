@@ -4,7 +4,7 @@ import java.util.Objects;
 
 class DefaultValidationInfo implements ValidatorInfo {
 
-    private static final DefaultValidationInfo GENERIC = of("GENERIC", "Validation of a generic Phenopacket");
+    private static final DefaultValidationInfo GENERIC = of("GENERIC", "validation with generic JSON Schema");
     private static final DefaultValidationInfo RARE_DISEASE_VALIDATOR = of("RARE_DISEASE_VALIDATOR", "Validation of rare disease Phenopacket constraints");
 
     static ValidatorInfo generic() {
