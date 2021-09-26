@@ -15,6 +15,7 @@ import org.phenopackets.validator.core.ValidatorInfo;
 import org.phenopackets.validator.testdatagen.PhenopacketUtil;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,8 +28,7 @@ import static org.phenopackets.validator.testdatagen.PhenopacketUtil.*;
  */
 public class JsonSchemaDiseaseValidatorTest {
 
-    private static final ClasspathJsonSchemaValidatorFactory FACTORY = ClasspathJsonSchemaValidatorFactory.defaultValidators();
-
+    private static final Map<ValidatorInfo, JsonSchemaValidator> jsonValidatorMap = ClasspathJsonSchemaValidatorFactory.genericValidator();
 
     private static Disease mondoDisease() {
         var chagas = ontologyClass("MONDO:0005491", "Chagas cardiomyopathy");
@@ -63,7 +63,9 @@ public class JsonSchemaDiseaseValidatorTest {
 
     @Test
     public void testPhenopacketValidity() throws InvalidProtocolBufferException {
-        JsonSchemaValidator validator = FACTORY.getValidatorForType(ValidatorInfo.generic()).get();
+        JsonSchemaValidator validator = jsonValidatorMap.values().stream()
+                .findFirst()
+                .get();
         String json =  JsonFormat.printer().print(phenopacket);
         List<? extends ValidationItem> errors = validator.validate(json);
         assertTrue(errors.isEmpty());
@@ -71,12 +73,17 @@ public class JsonSchemaDiseaseValidatorTest {
 
     @Test
     public void testLacksId() throws InvalidProtocolBufferException {
-        JsonSchemaValidator validator = FACTORY.getValidatorForType(ValidatorInfo.generic()).get();
+        JsonSchemaValidator validator = jsonValidatorMap.values().stream()
+                .findFirst()
+                .get();
         // the Phenopacket is not valid if we remove the id
         Phenopacket p1 = Phenopacket.newBuilder(phenopacket).clearId().build();
         String json =  JsonFormat.printer().print(p1);
         System.out.println(json);
         List<? extends ValidationItem> errors = validator.validate(json);
+        for (var e: errors) {
+            System.out.println(e);
+        }
         assertEquals(1, errors.size());
         ValidationItem error = errors.get(0);
         assertEquals(ErrorType.JSON_REQUIRED, error.errorType());

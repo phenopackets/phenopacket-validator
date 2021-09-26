@@ -19,6 +19,7 @@ public class ClasspathJsonSchemaValidatorFactory implements PhenopacketValidator
 
     private final Map<ValidatorInfo, JsonSchemaValidator> validatorMap;
 
+    /*
     public static ClasspathJsonSchemaValidatorFactory defaultValidators() {
         Map<ValidatorInfo, JsonSchemaValidator> validatorMap = makeValidatorMap();
         return new ClasspathJsonSchemaValidatorFactory(validatorMap);
@@ -26,8 +27,20 @@ public class ClasspathJsonSchemaValidatorFactory implements PhenopacketValidator
 
     private static Map<ValidatorInfo, JsonSchemaValidator> makeValidatorMap() {
         return Map.of(
-                ValidatorInfo.generic(), makeJsonValidator("/schema/phenopacket-general-schema.json", ValidatorInfo.generic()),
+                ValidatorInfo.generic(), makeJsonValidator("/schema/phenopacket-generic.json", ValidatorInfo.generic()),
                 ValidatorInfo.rareDiseaseValidation(), makeJsonValidator("/schema/hpo-rare-disease-schema.json", ValidatorInfo.rareDiseaseValidation())
+        );
+    } */
+
+    public static Map<ValidatorInfo, JsonSchemaValidator> genericValidator() {
+        return Map.of(
+                ValidatorInfo.generic(), makeJsonValidator("/schema/phenopacket-generic.json", ValidatorInfo.generic())
+        );
+    }
+
+    public static Map<ValidatorInfo, JsonSchemaValidator> rareHpoValidator() {
+        return Map.of(
+                ValidatorInfo.generic(), makeJsonValidator("/schema/hpo-rare-disease-schema.json", ValidatorInfo.generic())
         );
     }
 
