@@ -11,15 +11,15 @@ public class JsonValidationItemType implements ValidationItemType {
     /**
      * JSON schema error meaning that the JSON code contained a property not present in the schema.
      */
-    public final static JsonValidationItemType JSON_ADDITIONAL_PROPERTIES =
+    public final static ValidationItemType JSON_ADDITIONAL_PROPERTIES =
             new JsonValidationItemType("additionalProperties", "Use of a property not present in the schema");
     /** JSON schema error meaning that the JSON code failed to contain a property required by the schema. */
-    public final static JsonValidationItemType JSON_REQUIRED =
+    public final static ValidationItemType JSON_REQUIRED =
             new JsonValidationItemType("required", "failure to contain a property required by the schema");
     /** The type of an object is not as required by the schema, e.g., we get a string instead of an array. */
-    public final static JsonValidationItemType JSON_TYPE =
+    public final static ValidationItemType JSON_TYPE =
             new JsonValidationItemType("type", "incorrect data type of object");
-    public final static JsonValidationItemType JSON_ENUM=
+    public final static ValidationItemType JSON_ENUM=
             new JsonValidationItemType("enum", "TODO");
 
 
@@ -41,7 +41,7 @@ public class JsonValidationItemType implements ValidationItemType {
         return description;
     }
 
-    public static JsonValidationItemType stringToErrorType(String error) {
+    public static ValidationItemType stringToErrorType(String error) {
         switch (error) {
             case "additionalProperties": return JSON_ADDITIONAL_PROPERTIES;
             case "required": return JSON_REQUIRED;

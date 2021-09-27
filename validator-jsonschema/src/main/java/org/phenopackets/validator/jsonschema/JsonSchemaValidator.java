@@ -40,7 +40,7 @@ public class JsonSchemaValidator implements PhenopacketValidator {
      * @throws PhenopacketValidatorRuntimeException if <code>jsonSchema</code> is not a valid file or if the file is
      *                                              not a valid JSON schema specification
      */
-    public static JsonSchemaValidator of(File jsonSchema, ValidatorInfo validatorInfo) {
+    public static PhenopacketValidator of(File jsonSchema, ValidatorInfo validatorInfo) {
         if (!jsonSchema.isFile()) {
             throw new PhenopacketValidatorRuntimeException("Could not open file at \"" + jsonSchema.getAbsolutePath() + "\"");
         }
@@ -52,7 +52,7 @@ public class JsonSchemaValidator implements PhenopacketValidator {
         }
     }
 
-    public static JsonSchemaValidator of(InputStream inputStream, ValidatorInfo validatorInfo) {
+    public static PhenopacketValidator of(InputStream inputStream, ValidatorInfo validatorInfo) {
         JsonSchemaFactory schemaFactory = JsonSchemaFactory.getInstance(VERSION_FLAG);
         return new JsonSchemaValidator(schemaFactory.getSchema(inputStream), validatorInfo);
     }

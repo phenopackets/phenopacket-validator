@@ -2,6 +2,7 @@ package org.phenopackets.validator.jsonschema;
 
 import org.junit.jupiter.api.Test;
 import org.phenopackets.schema.v2.Phenopacket;
+import org.phenopackets.validator.core.PhenopacketValidator;
 import org.phenopackets.validator.testdatagen.RareDiseasePhenopacket;
 import org.phenopackets.validator.testdatagen.SimplePhenopacket;
 import org.phenopackets.validator.core.ValidationItem;
@@ -21,8 +22,8 @@ import static org.phenopackets.validator.jsonschema.JsonValidationItemType.JSON_
 
 public class JsonSchemaValidatorTest {
 
-    private static final Map<ValidatorInfo, JsonSchemaValidator> genericValidatorMap = ClasspathJsonSchemaValidatorFactory.genericValidator();
-    private static final Map<ValidatorInfo, JsonSchemaValidator> rareHpoValidatorMap = ClasspathJsonSchemaValidatorFactory.rareHpoValidator();
+    private static final Map<ValidatorInfo, PhenopacketValidator> genericValidatorMap = JsonSchemaValidatorFactory.genericValidator();
+    private static final Map<ValidatorInfo, PhenopacketValidator> rareHpoValidatorMap = JsonSchemaValidatorFactory.rareHpoValidator();
 
     private static final SimplePhenopacket simplePhenopacket = new SimplePhenopacket();
 
@@ -35,7 +36,7 @@ public class JsonSchemaValidatorTest {
 
     @Test
     public void testValidationOfSimpleValidPhenopacket() throws Exception {
-        JsonSchemaValidator validator = genericValidatorMap.values().stream()
+        PhenopacketValidator validator = genericValidatorMap.values().stream()
                 .findFirst()
                 .get();
         Phenopacket phenopacket = simplePhenopacket.getPhenopacket();
@@ -57,8 +58,8 @@ public class JsonSchemaValidatorTest {
      * It does not contain an id or a metaData element and thus should fail.
      */
     @Test
-    public void testValidationOfSimpleInValidPhenopacket() throws Exception {
-        JsonSchemaValidator validator = genericValidatorMap.values().stream()
+    public void testValidationOfSimpleInValidPhenopacket() {
+        PhenopacketValidator validator = genericValidatorMap.values().stream()
                 .findFirst()
                 .get();
 
@@ -80,7 +81,7 @@ public class JsonSchemaValidatorTest {
 
     @Test
     public void testRareDiseaseBethlemahmValidPhenopacket() throws Exception {
-        JsonSchemaValidator validator = rareHpoValidatorMap.values().stream()
+        PhenopacketValidator validator = rareHpoValidatorMap.values().stream()
                 .findFirst()
                 .get();
 
@@ -93,7 +94,7 @@ public class JsonSchemaValidatorTest {
 
     @Test
     public void testRareDiseaseBethlemahmInvalidValidPhenopacket() throws IOException {
-        JsonSchemaValidator validator = rareHpoValidatorMap.values().stream()
+        PhenopacketValidator validator = rareHpoValidatorMap.values().stream()
                 .findFirst()
                 .get();
         File invalidMyopathyPhenopacket = fileFromClasspath("json/bethlehamMyopathyInvalidExample.json");

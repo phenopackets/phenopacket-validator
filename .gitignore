@@ -125,3 +125,4 @@ nb-configuration.xml
 .nb-gradle/
 
 # Created by .ignore support plugin (hsz.mobi)
+/phenopacket-validation.tsv

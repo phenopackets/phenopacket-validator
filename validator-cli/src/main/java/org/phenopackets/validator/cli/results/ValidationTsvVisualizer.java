@@ -22,7 +22,7 @@ public class ValidationTsvVisualizer {
 
     /**
      * Add a ValidationInfo (i.e., validation type) for which no errors were found.
-     * @param vinfo
+     * @param vinfo validation info for a test that was error free
      */
     public void errorFree(ValidatorInfo vinfo) {
         errorFreeValidations.add(vinfo);
@@ -43,6 +43,9 @@ public class ValidationTsvVisualizer {
         writer.write(tsvHeader() + "\n");
         for (var result : this.errors.values()) {
             writer.write(String.join("\t",result.getFields()) + "\n");
+        }
+        for (var vinfo : this.errorFreeValidations) {
+            writer.write(String.join("\t",List.of(vinfo.validatorName().toString(), "no errors", vinfo.validatorId().toString())) + "\n");
         }
     }
 

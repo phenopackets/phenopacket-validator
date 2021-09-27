@@ -17,6 +17,7 @@ public final class JsonValidationItem implements ValidationItem {
     private final ValidationItemType itemType;
     private final String message;
 
+
     public JsonValidationItem(ValidatorInfo validatorInfo, ValidationMessage validationMessage) {
         this.validatorInfo = validatorInfo;
         this.itemType = JsonValidationItemType.stringToErrorType(validationMessage.getType());

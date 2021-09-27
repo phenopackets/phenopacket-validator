@@ -9,6 +9,7 @@ import org.phenopackets.schema.v2.core.Disease;
 import org.phenopackets.schema.v2.core.MetaData;
 import org.phenopackets.schema.v2.core.Resource;
 import org.phenopackets.schema.v2.core.TimeElement;
+import org.phenopackets.validator.core.PhenopacketValidator;
 import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
 import org.phenopackets.validator.testdatagen.PhenopacketUtil;
@@ -28,7 +29,7 @@ import static org.phenopackets.validator.testdatagen.PhenopacketUtil.*;
  */
 public class JsonSchemaDiseaseValidatorTest {
 
-    private static final Map<ValidatorInfo, JsonSchemaValidator> jsonValidatorMap = ClasspathJsonSchemaValidatorFactory.genericValidator();
+    private static final Map<ValidatorInfo, PhenopacketValidator> jsonValidatorMap = JsonSchemaValidatorFactory.genericValidator();
 
     private static Disease mondoDisease() {
         var chagas = ontologyClass("MONDO:0005491", "Chagas cardiomyopathy");
@@ -63,7 +64,7 @@ public class JsonSchemaDiseaseValidatorTest {
 
     @Test
     public void testPhenopacketValidity() throws InvalidProtocolBufferException {
-        JsonSchemaValidator validator = jsonValidatorMap.values().stream()
+        PhenopacketValidator validator = jsonValidatorMap.values().stream()
                 .findFirst()
                 .get();
         String json =  JsonFormat.printer().print(phenopacket);
@@ -73,7 +74,7 @@ public class JsonSchemaDiseaseValidatorTest {
 
     @Test
     public void testLacksId() throws InvalidProtocolBufferException {
-        JsonSchemaValidator validator = jsonValidatorMap.values().stream()
+        PhenopacketValidator validator = jsonValidatorMap.values().stream()
                 .findFirst()
                 .get();
         // the Phenopacket is not valid if we remove the id

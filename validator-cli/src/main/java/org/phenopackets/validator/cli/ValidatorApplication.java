@@ -3,9 +3,10 @@ package org.phenopackets.validator.cli;
 import org.phenopackets.validator.cli.results.ValidationItemTsvVisualizer;
 import org.phenopackets.validator.cli.results.ValidationTsvVisualizer;
 import org.phenopackets.validator.core.PhenopacketValidator;
+import org.phenopackets.validator.core.PhenopacketValidatorRegistry;
 import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
-import org.phenopackets.validator.jsonschema.ClasspathJsonSchemaValidatorFactory;
+import org.phenopackets.validator.jsonschema.JsonSchemaValidatorFactory;
 import org.phenopackets.validator.jsonschema.JsonSchemaValidator;
 import org.phenopackets.validator.ontology.HpoValidator;
 import org.phenopackets.validator.ontology.OntologyValidator;
@@ -15,13 +16,11 @@ import picocli.CommandLine;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @CommandLine.Command(name = "PhenopacketValidator", version = "0.1.0", mixinStandardHelpOptions = true)
-public class ValidatorApplication implements Runnable  {
+public class ValidatorApplication implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidatorApplication.class);
 
     @CommandLine.Option(names = "--rare", description = "apply HPO rare-disease constraints")
@@ -36,7 +35,7 @@ public class ValidatorApplication implements Runnable  {
     @CommandLine.Option(names = {"-p", "--phenopacket"}, required = true, description = "Phenopacket file to be validated")
     public String phenopacket;
 
-    @CommandLine.Option(names={"-o", "--out"}, description = "name of output file (default ${DEFAULT_VALUE})")
+    @CommandLine.Option(names = {"-o", "--out"}, description = "name of output file (default ${DEFAULT_VALUE})")
     public String outfileName = "phenopacket-validation.tsv";
 
     private static final String CUSTOM_JSON_VALIDATOR_TYPE = "Custom JSON Schema validation";
@@ -50,7 +49,6 @@ public class ValidatorApplication implements Runnable  {
     }
 
 
-
     @Override
     public void run() {
         List<ValidatorInfo> validationTypes = new LinkedList<>();
@@ -61,58 +59,43 @@ public class ValidatorApplication implements Runnable  {
         }
         File phenopacketFile = new File(phenopacket);
         LOGGER.info("Validating {} phenopacket", phenopacketFile);
-        // TODO  -- adapt PhenopacketValidatorFactory to accept multiple JSON Schema files
-        Map<ValidatorInfo, JsonSchemaValidator> jsonValidatorMap = ClasspathJsonSchemaValidatorFactory.genericValidator();
+        Map<ValidatorInfo, PhenopacketValidator> validatorMap = new HashMap<>(JsonSchemaValidatorFactory.genericValidator());
         for (File jsonSchema : jsonSchemaFiles) {
             // we will create ValidatorInfo objects based on the names and paths of the files.
             String baseName = jsonSchema.getName();
             ValidatorInfo vinfo = ValidatorInfo.of(CUSTOM_JSON_VALIDATOR_TYPE, baseName);
-            JsonSchemaValidator jvalid = JsonSchemaValidator.of(jsonSchema, vinfo);
-            jsonValidatorMap.put(vinfo, jvalid);
+            PhenopacketValidator jvalid = JsonSchemaValidator.of(jsonSchema, vinfo);
+            validatorMap.put(vinfo, jvalid);
             LOGGER.info("Adding configuration file at `{}`", vinfo);
         }
+        OntologyValidator hpoValidator = new HpoValidator(new File(hpoJsonPath));
+        validatorMap.put(hpoValidator.info(), hpoValidator);
+        PhenopacketValidatorRegistry registry = PhenopacketValidatorRegistry.of(validatorMap);
+
         // poor man's formatting
         LOGGER.info("");
         LOGGER.info("--------------------------------------------------------------------------------");
         LOGGER.info("");
         ValidationTsvVisualizer resultVisualizer = new ValidationTsvVisualizer();
         try (InputStream in = Files.newInputStream(phenopacketFile.toPath())) {
-            for (var e : jsonValidatorMap.entrySet()) {
-                ValidatorInfo vinfo = e.getKey();
-                PhenopacketValidator validator = e.getValue();
-                List<ValidationItem> validationItems = validator.validate(phenopacketFile);
-                if (validationItems.isEmpty()) {
-                    LOGGER.info("No errors found");
-                    System.out.println("JSON: No errors found");
-                    resultVisualizer.errorFree(vinfo);
-                } else {
-                    LOGGER.info("Found {} errors:", validationItems.size());
-                    for (ValidationItem item : validationItems) {
-                        LOGGER.info("({}) {}", item.type(), item.message());
-                        resultVisualizer.error(vinfo, new ValidationItemTsvVisualizer(item));
+            Set<ValidatorInfo> validatorInfoSet = registry.getValidationTypeSet();
+            for (var vinfo : validatorInfoSet) {
+                var opt = registry.getValidatorForType(vinfo);
+                if (opt.isPresent()) {
+                    PhenopacketValidator validator = opt.get();
+                    List<ValidationItem> validationItems = validator.validate(phenopacketFile);
+                    if (validationItems.isEmpty()) {
+                        resultVisualizer.errorFree(vinfo);
+                    } else {
+                        for (var item : validationItems) {
+                            resultVisualizer.error(vinfo, new ValidationItemTsvVisualizer(item));
+                        }
                     }
-                }
-            }
-            // Now check with HPO
-            OntologyValidator hpoValidator = new HpoValidator(new File(hpoJsonPath));
-            ValidatorInfo hpoInfo = hpoValidator.info();
-            List<ValidationItem> validationItems = hpoValidator.validate(phenopacketFile);
-            if (validationItems.isEmpty()) {
-                LOGGER.info("HPO: No errors found");
-                System.out.println("HPO: No errors found");
-                resultVisualizer.errorFree(hpoInfo);
-            } else {
-                LOGGER.info("Found {} errors:", validationItems.size());
-                for (ValidationItem item : validationItems) {
-                    LOGGER.info("({}) {}", item.type(), item.message());
-                    resultVisualizer.error(hpoInfo, new ValidationItemTsvVisualizer(item));
                 }
             }
         } catch (IOException e) {
             LOGGER.warn("Error opening the phenopacket", e);
         }
-
-
         // poor man's formatting
         LOGGER.info("");
         LOGGER.info("--------------------------------------------------------------------------------");
