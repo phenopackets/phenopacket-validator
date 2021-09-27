@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.phenopackets.schema.v2.Phenopacket;
 import org.phenopackets.validator.testdatagen.RareDiseasePhenopacket;
 import org.phenopackets.validator.testdatagen.SimplePhenopacket;
-import org.phenopackets.validator.core.ErrorType;
 import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
 
@@ -17,6 +16,8 @@ import java.util.Objects;
 import com.google.protobuf.util.JsonFormat;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.phenopackets.validator.jsonschema.JsonValidationItemType.JSON_ADDITIONAL_PROPERTIES;
+import static org.phenopackets.validator.jsonschema.JsonValidationItemType.JSON_REQUIRED;
 
 public class JsonSchemaValidatorTest {
 
@@ -47,7 +48,7 @@ public class JsonSchemaValidatorTest {
         errors = validator.validate(json);
         assertEquals(1, errors.size());
         ValidationItem error = errors.get(0);
-        assertEquals(ErrorType.JSON_REQUIRED, error.errorType());
+        assertEquals(JSON_REQUIRED, error.type());
         assertEquals("$.id: is missing but it is required", error.message());
     }
 
@@ -67,13 +68,13 @@ public class JsonSchemaValidatorTest {
 
         assertEquals(3, errors.size());
         ValidationItem error = errors.get(0);
-        assertEquals(ErrorType.JSON_REQUIRED, error.errorType());
+        assertEquals(JSON_REQUIRED, error.type());
         assertEquals("$.id: is missing but it is required", error.message());
         error = errors.get(1);
-        assertEquals(ErrorType.JSON_REQUIRED, error.errorType());
+        assertEquals(JSON_REQUIRED, error.type());
         assertEquals("$.metaData: is missing but it is required", error.message());
         error = errors.get(2);
-        assertEquals(ErrorType.JSON_ADDITIONAL_PROPERTIES, error.errorType());
+        assertEquals(JSON_ADDITIONAL_PROPERTIES, error.type());
         assertEquals("$.disney: is not defined in the schema and the schema does not allow additional properties", error.message());
     }
 
@@ -102,7 +103,7 @@ public class JsonSchemaValidatorTest {
         }
         assertEquals(1, errors.size());
         ValidationItem error = errors.get(0);
-        assertEquals(ErrorType.JSON_REQUIRED, error.errorType());
+        assertEquals(JSON_REQUIRED, error.type());
         assertEquals("$.phenotypicFeatures: is missing but it is required", error.message());
     }
 

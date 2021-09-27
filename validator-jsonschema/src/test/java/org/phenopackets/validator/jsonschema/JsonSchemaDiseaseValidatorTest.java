@@ -9,7 +9,6 @@ import org.phenopackets.schema.v2.core.Disease;
 import org.phenopackets.schema.v2.core.MetaData;
 import org.phenopackets.schema.v2.core.Resource;
 import org.phenopackets.schema.v2.core.TimeElement;
-import org.phenopackets.validator.core.ErrorType;
 import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
 import org.phenopackets.validator.testdatagen.PhenopacketUtil;
@@ -19,6 +18,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.phenopackets.validator.jsonschema.JsonValidationItemType.JSON_REQUIRED;
 import static org.phenopackets.validator.testdatagen.PhenopacketUtil.*;
 
 /**
@@ -86,7 +86,7 @@ public class JsonSchemaDiseaseValidatorTest {
         }
         assertEquals(1, errors.size());
         ValidationItem error = errors.get(0);
-        assertEquals(ErrorType.JSON_REQUIRED, error.errorType());
+        assertEquals(JSON_REQUIRED, error.type());
         assertEquals("$.id: is missing but it is required", error.message());
     }
 

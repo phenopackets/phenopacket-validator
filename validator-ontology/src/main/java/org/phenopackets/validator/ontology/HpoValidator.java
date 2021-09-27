@@ -29,13 +29,13 @@ public class HpoValidator extends OntologyValidator {
 
     private static final String HPO_PREFIX = "HP";
 
-    protected HpoValidator(File jsonFile, ValidatorInfo vinfo) {
-        super(jsonFile, vinfo);
+    public HpoValidator(File jsonFile) {
+        super(jsonFile, ValidatorInfo.of(ONTOLOGY_VALIDATOR, "Human Phenotype Ontology"));
     }
 
     @Override
     public ValidatorInfo info() {
-        return ValidatorInfo.of(ONTOLOGY_VALIDATOR, "Human Phenotype Ontology");
+        return validatorInfo;
     }
 
 
@@ -48,7 +48,7 @@ public class HpoValidator extends OntologyValidator {
      * NOT Abnormal liver morphology but OBSERVED Hepatic fibrosis. The latter is not possible because
      * Hepatic fibrosis implies Abnormal liver morphology
      * @param inputStream -- stream from the phenopacket.
-     * @return
+     * @return list of validation errors
      */
     @Override
     public List<ValidationItem> validate(InputStream inputStream) {
@@ -63,7 +63,6 @@ public class HpoValidator extends OntologyValidator {
             Phenopacket.Builder phenoPacketBuilder = Phenopacket.newBuilder();
             JsonFormat.parser().merge(phenopacketJsonString, phenoPacketBuilder);
             Phenopacket phenopacket = phenoPacketBuilder.build();
-            //return new PhenopacketImporter(phenopacket,ontology);
             for (var pf : phenopacket.getPhenotypicFeaturesList()) {
                 String id = pf.getType().getId();
                 try {

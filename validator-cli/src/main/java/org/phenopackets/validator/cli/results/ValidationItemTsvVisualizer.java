@@ -15,9 +15,9 @@ public class ValidationItemTsvVisualizer {
 
     /**
      * Get a list of fields for display
-     * @return
+     * @return A list of Strings that can be used to create a row of a TSV or CSV file
      */
     public List<String> getFields() {
-        return List.of(error.errorType().name(), error.message(), error.validatorInfo().validatorId());
+        return List.of(error.type().itemType(), error.message(), error.validatorInfo().validatorId());
     }
 }

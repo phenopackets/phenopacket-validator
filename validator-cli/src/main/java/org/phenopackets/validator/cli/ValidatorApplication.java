@@ -7,6 +7,8 @@ import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
 import org.phenopackets.validator.jsonschema.ClasspathJsonSchemaValidatorFactory;
 import org.phenopackets.validator.jsonschema.JsonSchemaValidator;
+import org.phenopackets.validator.ontology.HpoValidator;
+import org.phenopackets.validator.ontology.OntologyValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -27,6 +29,9 @@ public class ValidatorApplication implements Runnable  {
 
     @CommandLine.Parameters(arity = "0..*", description = "one or more JSON Schema configuration files")
     public List<File> jsonSchemaFiles = List.of();
+
+    @CommandLine.Option(names = "--hp", required = true, description = "check with HPO (hp.json)")
+    public String hpoJsonPath;
 
     @CommandLine.Option(names = {"-p", "--phenopacket"}, required = true, description = "Phenopacket file to be validated")
     public String phenopacket;
@@ -78,18 +83,35 @@ public class ValidatorApplication implements Runnable  {
                 List<ValidationItem> validationItems = validator.validate(phenopacketFile);
                 if (validationItems.isEmpty()) {
                     LOGGER.info("No errors found");
+                    System.out.println("JSON: No errors found");
                     resultVisualizer.errorFree(vinfo);
                 } else {
                     LOGGER.info("Found {} errors:", validationItems.size());
                     for (ValidationItem item : validationItems) {
-                        LOGGER.info("({}) {}", item.errorType(), item.message());
+                        LOGGER.info("({}) {}", item.type(), item.message());
                         resultVisualizer.error(vinfo, new ValidationItemTsvVisualizer(item));
                     }
+                }
+            }
+            // Now check with HPO
+            OntologyValidator hpoValidator = new HpoValidator(new File(hpoJsonPath));
+            ValidatorInfo hpoInfo = hpoValidator.info();
+            List<ValidationItem> validationItems = hpoValidator.validate(phenopacketFile);
+            if (validationItems.isEmpty()) {
+                LOGGER.info("HPO: No errors found");
+                System.out.println("HPO: No errors found");
+                resultVisualizer.errorFree(hpoInfo);
+            } else {
+                LOGGER.info("Found {} errors:", validationItems.size());
+                for (ValidationItem item : validationItems) {
+                    LOGGER.info("({}) {}", item.type(), item.message());
+                    resultVisualizer.error(hpoInfo, new ValidationItemTsvVisualizer(item));
                 }
             }
         } catch (IOException e) {
             LOGGER.warn("Error opening the phenopacket", e);
         }
+
 
         // poor man's formatting
         LOGGER.info("");

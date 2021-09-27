@@ -1,7 +1,8 @@
 package org.phenopackets.validator.jsonschema;
 import com.networknt.schema.ValidationMessage;
-import org.phenopackets.validator.core.ErrorType;
+
 import org.phenopackets.validator.core.ValidationItem;
+import org.phenopackets.validator.core.ValidationItemType;
 import org.phenopackets.validator.core.ValidatorInfo;
 
 import java.util.Objects;
@@ -13,12 +14,12 @@ import java.util.Objects;
 public final class JsonValidationItem implements ValidationItem {
 
     private final ValidatorInfo validatorInfo;
-    private final ErrorType errorType;
+    private final ValidationItemType itemType;
     private final String message;
 
     public JsonValidationItem(ValidatorInfo validatorInfo, ValidationMessage validationMessage) {
         this.validatorInfo = validatorInfo;
-        this.errorType = ErrorType.stringToErrorType(validationMessage.getType());
+        this.itemType = JsonValidationItemType.stringToErrorType(validationMessage.getType());
         this.message = validationMessage.getMessage();
     }
 
@@ -28,8 +29,8 @@ public final class JsonValidationItem implements ValidationItem {
     }
 
     @Override
-    public ErrorType errorType() {
-        return this.errorType;
+    public ValidationItemType type() {
+        return this.itemType;
     }
 
     @Override
@@ -42,20 +43,21 @@ public final class JsonValidationItem implements ValidationItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JsonValidationItem that = (JsonValidationItem) o;
-        return Objects.equals(validatorInfo, that.validatorInfo) && errorType == that.errorType && Objects.equals(message, that.message);
+        return Objects.equals(validatorInfo, that.validatorInfo) && itemType == that.itemType && Objects.equals(message, that.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(validatorInfo, errorType, message);
+        return Objects.hash(validatorInfo, itemType, message);
     }
 
     @Override
     public String toString() {
         return "JsonValidationError{" +
                 "validatorInfo='" + validatorInfo + '\'' +
-                ", errorType=" + errorType +
+                ", errorType=" + itemType +
                 ", message='" + message + '\'' +
                 '}';
     }
+
 }
