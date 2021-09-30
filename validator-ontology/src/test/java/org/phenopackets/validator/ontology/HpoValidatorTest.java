@@ -119,7 +119,7 @@ public class HpoValidatorTest {
             List<ValidationItem> items = validator.validate(new ByteArrayInputStream(bytes));
 
             assertThat(items, hasSize(1));
-            ValidationItem expected = ValidationItem.of(validator.validatorInfo, OntologyValidationItemTypes.ONTOLOGY_INVALID_ID, "Could not find term id: HP:9999999");
+            ValidationItem expected = ValidationItem.of(validator.info(), OntologyValidationItemTypes.ONTOLOGY_INVALID_ID, "Could not find term id: HP:9999999");
             assertThat(items.get(0), equalTo(expected));
         }
 
@@ -134,7 +134,7 @@ public class HpoValidatorTest {
             List<ValidationItem> items = validator.validate(new ByteArrayInputStream(bytes));
 
             assertThat(items, hasSize(1));
-            ValidationItem expected = ValidationItem.of(validator.validatorInfo,
+            ValidationItem expected = ValidationItem.of(validator.info(),
                     OntologyValidationItemTypes.ONTOLOGY_TERM_WITH_ALTERNATE_ID,
                     "Using alternate (obsolete) id (HP:9999999) instead of primary id (HP:0000001)");
             assertThat(items.get(0), equalTo(expected));
@@ -151,7 +151,7 @@ public class HpoValidatorTest {
             List<ValidationItem> items = validator.validate(new ByteArrayInputStream(bytes));
 
             assertThat(items, hasSize(1));
-            ValidationItem expected = ValidationItem.of(validator.validatorInfo,
+            ValidationItem expected = ValidationItem.of(validator.info(),
                     OntologyValidationItemTypes.TERM_AND_ANCESTOR_ARE_USED,
                     "Using both term HP:0000004 and its ancestor HP:0000003");
             assertThat(items.get(0), equalTo(expected));
@@ -168,7 +168,7 @@ public class HpoValidatorTest {
             List<ValidationItem> items = validator.validate(new ByteArrayInputStream(bytes));
 
             assertThat(items, hasSize(1));
-            ValidationItem expected = ValidationItem.of(validator.validatorInfo,
+            ValidationItem expected = ValidationItem.of(validator.info(),
                     OntologyValidationItemTypes.TERM_IS_USED_AND_ANCESTOR_IS_EXCLUDED,
                     "Term HP:0000004 is present while its ancestor HP:0000003 is excluded");
             assertThat(items.get(0), equalTo(expected));

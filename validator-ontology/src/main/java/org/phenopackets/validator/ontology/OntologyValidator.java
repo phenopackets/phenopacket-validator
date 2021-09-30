@@ -21,8 +21,6 @@ public abstract class OntologyValidator implements PhenopacketValidator  {
     protected final ValidatorInfo validatorInfo;
     protected final Ontology ontology;
 
-    protected final static String ONTOLOGY_VALIDATOR = "Otology validation";
-
     protected OntologyValidator(Ontology ontology, ValidatorInfo vinfo) {
         this.ontology = ontology;
         this.validatorInfo = vinfo;
