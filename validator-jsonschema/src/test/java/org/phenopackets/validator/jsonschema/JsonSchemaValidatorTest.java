@@ -17,13 +17,13 @@ import java.util.Objects;
 import com.google.protobuf.util.JsonFormat;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.phenopackets.validator.jsonschema.JsonValidationItemType.JSON_ADDITIONAL_PROPERTIES;
-import static org.phenopackets.validator.jsonschema.JsonValidationItemType.JSON_REQUIRED;
+import static org.phenopackets.validator.jsonschema.JsonValidationItemTypes.JSON_ADDITIONAL_PROPERTIES;
+import static org.phenopackets.validator.jsonschema.JsonValidationItemTypes.JSON_REQUIRED;
 
 public class JsonSchemaValidatorTest {
 
-    private static final Map<ValidatorInfo, PhenopacketValidator> genericValidatorMap = JsonSchemaValidatorFactory.genericValidator();
-    private static final Map<ValidatorInfo, PhenopacketValidator> rareHpoValidatorMap = JsonSchemaValidatorFactory.rareHpoValidator();
+    private static final Map<ValidatorInfo, PhenopacketValidator> genericValidatorMap = JsonSchemaValidators.genericValidator();
+    private static final Map<ValidatorInfo, PhenopacketValidator> rareHpoValidatorMap = JsonSchemaValidators.rareHpoValidator();
 
     private static final SimplePhenopacket simplePhenopacket = new SimplePhenopacket();
 

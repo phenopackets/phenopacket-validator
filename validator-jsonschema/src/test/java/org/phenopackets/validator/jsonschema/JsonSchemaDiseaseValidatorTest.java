@@ -19,7 +19,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.phenopackets.validator.jsonschema.JsonValidationItemType.JSON_REQUIRED;
+import static org.phenopackets.validator.jsonschema.JsonValidationItemTypes.*;
 import static org.phenopackets.validator.testdatagen.PhenopacketUtil.*;
 
 /**
@@ -29,7 +29,7 @@ import static org.phenopackets.validator.testdatagen.PhenopacketUtil.*;
  */
 public class JsonSchemaDiseaseValidatorTest {
 
-    private static final Map<ValidatorInfo, PhenopacketValidator> jsonValidatorMap = JsonSchemaValidatorFactory.genericValidator();
+    private static final Map<ValidatorInfo, PhenopacketValidator> jsonValidatorMap = JsonSchemaValidators.genericValidator();
 
     private static Disease mondoDisease() {
         var chagas = ontologyClass("MONDO:0005491", "Chagas cardiomyopathy");

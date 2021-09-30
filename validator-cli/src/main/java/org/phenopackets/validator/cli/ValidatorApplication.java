@@ -8,7 +8,7 @@ import org.phenopackets.validator.core.PhenopacketValidator;
 import org.phenopackets.validator.core.PhenopacketValidatorRegistry;
 import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
-import org.phenopackets.validator.jsonschema.JsonSchemaValidatorFactory;
+import org.phenopackets.validator.jsonschema.JsonSchemaValidators;
 import org.phenopackets.validator.jsonschema.JsonSchemaValidator;
 import org.phenopackets.validator.ontology.HpoValidator;
 import org.phenopackets.validator.ontology.OntologyValidator;
@@ -61,7 +61,7 @@ public class ValidatorApplication implements Runnable {
         }
         File phenopacketFile = new File(phenopacket);
         LOGGER.info("Validating {} phenopacket", phenopacketFile);
-        Map<ValidatorInfo, PhenopacketValidator> validatorMap = new HashMap<>(JsonSchemaValidatorFactory.genericValidator());
+        Map<ValidatorInfo, PhenopacketValidator> validatorMap = new HashMap<>(JsonSchemaValidators.genericValidator());
         for (File jsonSchema : jsonSchemaFiles) {
             // we will create ValidatorInfo objects based on the names and paths of the files.
             String baseName = jsonSchema.getName();

@@ -8,12 +8,12 @@ import java.io.InputStream;
 import java.util.Map;
 
 /**
- * Validator factory that uses JSON schema definitions that are bundled within the application (on classpath).
+ * Utility class that uses JSON schema definitions that are bundled within the application (on classpath).
  * <p>
  * @author Daniel Danis
  * @author Peter N Robinson
  */
-public class JsonSchemaValidatorFactory {
+public class JsonSchemaValidators {
 
     public static Map<ValidatorInfo, PhenopacketValidator> genericValidator() {
         return Map.of(
@@ -28,12 +28,13 @@ public class JsonSchemaValidatorFactory {
     }
 
     private static PhenopacketValidator makeJsonValidator(String schemaPath, ValidatorInfo validationName) {
-        InputStream inputStream = JsonSchemaValidatorFactory.class.getResourceAsStream(schemaPath);
+        InputStream inputStream = JsonSchemaValidators.class.getResourceAsStream(schemaPath);
         if (inputStream == null)
             throw new PhenopacketValidatorRuntimeException("Invalid JSON schema path `" + schemaPath + '`');
 
         return JsonSchemaValidator.of(inputStream, validationName);
     }
 
+    private JsonSchemaValidators() {}
 
 }

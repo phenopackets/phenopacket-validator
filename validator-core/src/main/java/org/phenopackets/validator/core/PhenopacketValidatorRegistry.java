@@ -11,12 +11,13 @@ import java.util.Set;
  * @author Peter N Robinson
  */
 public interface PhenopacketValidatorRegistry {
-    Optional<? extends PhenopacketValidator> getValidatorForType(ValidatorInfo type);
-
-    Set<ValidatorInfo> getValidationTypeSet();
 
     static PhenopacketValidatorRegistry of(Map<ValidatorInfo, ? extends PhenopacketValidator> validMap) {
         return new DefaultValidatorRegistry(validMap);
     }
+
+    Optional<? extends PhenopacketValidator> getValidatorForType(ValidatorInfo type);
+
+    Set<ValidatorInfo> getValidationTypeSet();
 }
 
