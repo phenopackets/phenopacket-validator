@@ -1,5 +1,7 @@
 package org.phenopackets.validator.cli;
 
+import org.monarchinitiative.phenol.io.OntologyLoader;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.phenopackets.validator.cli.results.ValidationItemTsvVisualizer;
 import org.phenopackets.validator.cli.results.ValidationTsvVisualizer;
 import org.phenopackets.validator.core.PhenopacketValidator;
@@ -30,7 +32,7 @@ public class ValidatorApplication implements Runnable {
     public List<File> jsonSchemaFiles = List.of();
 
     @CommandLine.Option(names = "--hp", required = true, description = "check with HPO (hp.json)")
-    public String hpoJsonPath;
+    public File hpoJsonPath;
 
     @CommandLine.Option(names = {"-p", "--phenopacket"}, required = true, description = "Phenopacket file to be validated")
     public String phenopacket;
@@ -68,7 +70,8 @@ public class ValidatorApplication implements Runnable {
             validatorMap.put(vinfo, jvalid);
             LOGGER.info("Adding configuration file at `{}`", vinfo);
         }
-        OntologyValidator hpoValidator = new HpoValidator(new File(hpoJsonPath));
+        Ontology hpoOntology = OntologyLoader.loadOntology(hpoJsonPath);
+        OntologyValidator hpoValidator = new HpoValidator(hpoOntology);
         validatorMap.put(hpoValidator.info(), hpoValidator);
         PhenopacketValidatorRegistry registry = PhenopacketValidatorRegistry.of(validatorMap);
 
