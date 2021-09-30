@@ -9,6 +9,8 @@
     <version>0.1.1-SNAPSHOT</version>
 
     <packaging>pom</packaging>
+    <name>Phenopacket validator</name>
+    <description>Library and tools to help validate phenopackets</description>
 
     <modules>
         <module>validator-core</module>
@@ -62,7 +64,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
+        <java.version>16</java.version>
 
         <phenol.version>1.6.3</phenol.version>
         <protobuf.version>3.14.0</protobuf.version>

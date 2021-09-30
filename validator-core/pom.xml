@@ -15,17 +15,5 @@
     <name>validator-core</name>
     <description>Validator utilities for phenopackets</description>
 
-    <dependencies>
-        <!-- Utility for inter-converting CURIEs and IRIs
-            TODO - probably we can get rid of this dependency with a newer phenol version.
-            It seems to "leak" from phenol or some other library and be required in the pom file
-            although we do not explicitly use it.
-        -->
-        <dependency>
-            <groupId>org.prefixcommons</groupId>
-            <artifactId>curie-util</artifactId>
-            <version>0.0.2</version>
-        </dependency>
-    </dependencies>
 
 </project>
