@@ -2,14 +2,15 @@ package org.phenopackets.validator.core;
 
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class DefaultValidatorRegistry implements PhenopacketValidatorRegistry {
+class DefaultValidatorRegistry implements PhenopacketValidatorRegistry {
 
     private final Map<ValidatorInfo, ? extends PhenopacketValidator> validatorMap;
 
-    public DefaultValidatorRegistry(Map<ValidatorInfo, ? extends PhenopacketValidator> validMap) {
+    DefaultValidatorRegistry(Map<ValidatorInfo, ? extends PhenopacketValidator> validMap) {
         validatorMap = Map.copyOf(validMap);
     }
 
@@ -21,5 +22,18 @@ public class DefaultValidatorRegistry implements PhenopacketValidatorRegistry {
     @Override
     public Set<ValidatorInfo> getValidationTypeSet() {
         return validatorMap.keySet();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultValidatorRegistry that = (DefaultValidatorRegistry) o;
+        return Objects.equals(validatorMap, that.validatorMap);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(validatorMap);
     }
 }

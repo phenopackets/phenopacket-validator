@@ -1,12 +1,14 @@
 package org.phenopackets.validator.cli;
 
+import org.monarchinitiative.phenol.io.OntologyLoader;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.phenopackets.validator.cli.results.ValidationItemTsvVisualizer;
 import org.phenopackets.validator.cli.results.ValidationTsvVisualizer;
 import org.phenopackets.validator.core.PhenopacketValidator;
 import org.phenopackets.validator.core.PhenopacketValidatorRegistry;
 import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
-import org.phenopackets.validator.jsonschema.JsonSchemaValidatorFactory;
+import org.phenopackets.validator.jsonschema.JsonSchemaValidators;
 import org.phenopackets.validator.jsonschema.JsonSchemaValidator;
 import org.phenopackets.validator.ontology.HpoValidator;
 import org.phenopackets.validator.ontology.OntologyValidator;
@@ -30,7 +32,7 @@ public class ValidatorApplication implements Runnable {
     public List<File> jsonSchemaFiles = List.of();
 
     @CommandLine.Option(names = "--hp", required = true, description = "check with HPO (hp.json)")
-    public String hpoJsonPath;
+    public File hpoJsonPath;
 
     @CommandLine.Option(names = {"-p", "--phenopacket"}, required = true, description = "Phenopacket file to be validated")
     public String phenopacket;
@@ -59,7 +61,7 @@ public class ValidatorApplication implements Runnable {
         }
         File phenopacketFile = new File(phenopacket);
         LOGGER.info("Validating {} phenopacket", phenopacketFile);
-        Map<ValidatorInfo, PhenopacketValidator> validatorMap = new HashMap<>(JsonSchemaValidatorFactory.genericValidator());
+        Map<ValidatorInfo, PhenopacketValidator> validatorMap = new HashMap<>(JsonSchemaValidators.genericValidator());
         for (File jsonSchema : jsonSchemaFiles) {
             // we will create ValidatorInfo objects based on the names and paths of the files.
             String baseName = jsonSchema.getName();
@@ -68,7 +70,8 @@ public class ValidatorApplication implements Runnable {
             validatorMap.put(vinfo, jvalid);
             LOGGER.info("Adding configuration file at `{}`", vinfo);
         }
-        OntologyValidator hpoValidator = new HpoValidator(new File(hpoJsonPath));
+        Ontology hpoOntology = OntologyLoader.loadOntology(hpoJsonPath);
+        OntologyValidator hpoValidator = new HpoValidator(hpoOntology);
         validatorMap.put(hpoValidator.info(), hpoValidator);
         PhenopacketValidatorRegistry registry = PhenopacketValidatorRegistry.of(validatorMap);
 

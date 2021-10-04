@@ -21,38 +21,17 @@
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>json-schema-validator</artifactId>
-            <version>1.0.42</version>
         </dependency>
-
-        <!-- Utility for inter-converting CURIEs and IRIs
-            TODO - probably we can get rid of this dependency with a newer phenol version.
-            It seems to "leak" from phenol or some other library and be required in the pom file
-            although we do not explicitly use it.
-        -->
-        <dependency>
-            <groupId>org.prefixcommons</groupId>
-            <artifactId>curie-util</artifactId>
-            <version>0.0.2</version>
-        </dependency>
-
 
         <!-- To load the test cases-->
         <dependency>
             <groupId>org.phenopackets</groupId>
             <artifactId>phenopacket-schema</artifactId>
-            <version>${phenopacket-schema.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>${protobuf.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java-util</artifactId>
-            <version>${protobuf.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
