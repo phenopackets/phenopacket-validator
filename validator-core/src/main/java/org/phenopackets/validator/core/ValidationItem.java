@@ -8,13 +8,19 @@ package org.phenopackets.validator.core;
  */
 public interface ValidationItem {
 
+    static ValidationItem of(ValidatorInfo validatorInfo, ValidationItemType type, String message) {
+        return new ValidationItemDefault(validatorInfo, type, message);
+    }
+
     /**
      * @return basic description of the validator that produced this issue.
      */
     ValidatorInfo validatorInfo();
 
-    // TODO - decide which enum to use here - either ErrorType or ValidationAspect
-    ErrorType errorType();
+    /**
+     * @return description of the issue in a standard way intended for both grouping of the issues and human consumption.
+     */
+    ValidationItemType type();
 
     /**
      * @return string with description of the issue intended for human consumption.

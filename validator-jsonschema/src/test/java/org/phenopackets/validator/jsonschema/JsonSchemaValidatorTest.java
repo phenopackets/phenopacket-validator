@@ -1,26 +1,29 @@
 package org.phenopackets.validator.jsonschema;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.phenopackets.schema.v2.Phenopacket;
+import org.phenopackets.validator.core.PhenopacketValidator;
 import org.phenopackets.validator.testdatagen.RareDiseasePhenopacket;
 import org.phenopackets.validator.testdatagen.SimplePhenopacket;
-import org.phenopackets.validator.core.ErrorType;
 import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.google.protobuf.util.JsonFormat;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.phenopackets.validator.jsonschema.JsonValidationItemTypes.JSON_ADDITIONAL_PROPERTIES;
+import static org.phenopackets.validator.jsonschema.JsonValidationItemTypes.JSON_REQUIRED;
 
 public class JsonSchemaValidatorTest {
 
-    private static final ClasspathJsonSchemaValidatorFactory FACTORY = ClasspathJsonSchemaValidatorFactory.defaultValidators();
+    private static final Map<ValidatorInfo, PhenopacketValidator> genericValidatorMap = JsonSchemaValidators.genericValidator();
+    private static final Map<ValidatorInfo, PhenopacketValidator> rareHpoValidatorMap = JsonSchemaValidators.rareHpoValidator();
 
     private static final SimplePhenopacket simplePhenopacket = new SimplePhenopacket();
 
@@ -33,7 +36,9 @@ public class JsonSchemaValidatorTest {
 
     @Test
     public void testValidationOfSimpleValidPhenopacket() throws Exception {
-        JsonSchemaValidator validator = FACTORY.getValidatorForType(ValidatorInfo.generic()).get();
+        PhenopacketValidator validator = genericValidatorMap.values().stream()
+                .findFirst()
+                .get();
         Phenopacket phenopacket = simplePhenopacket.getPhenopacket();
         String json =  JsonFormat.printer().print(phenopacket);
         List<? extends ValidationItem> errors = validator.validate(json);
@@ -44,7 +49,7 @@ public class JsonSchemaValidatorTest {
         errors = validator.validate(json);
         assertEquals(1, errors.size());
         ValidationItem error = errors.get(0);
-        assertEquals(ErrorType.JSON_REQUIRED, error.errorType());
+        assertEquals(JSON_REQUIRED, error.type());
         assertEquals("$.id: is missing but it is required", error.message());
     }
 
@@ -53,8 +58,10 @@ public class JsonSchemaValidatorTest {
      * It does not contain an id or a metaData element and thus should fail.
      */
     @Test
-    public void testValidationOfSimpleInValidPhenopacket() throws Exception {
-        JsonSchemaValidator validator = FACTORY.getValidatorForType(ValidatorInfo.generic()).get();
+    public void testValidationOfSimpleInValidPhenopacket() {
+        PhenopacketValidator validator = genericValidatorMap.values().stream()
+                .findFirst()
+                .get();
 
         String invalidPhenopacketJson = "{\"disney\" : \"donald\"}";
 
@@ -62,19 +69,21 @@ public class JsonSchemaValidatorTest {
 
         assertEquals(3, errors.size());
         ValidationItem error = errors.get(0);
-        assertEquals(ErrorType.JSON_REQUIRED, error.errorType());
+        assertEquals(JSON_REQUIRED, error.type());
         assertEquals("$.id: is missing but it is required", error.message());
         error = errors.get(1);
-        assertEquals(ErrorType.JSON_REQUIRED, error.errorType());
+        assertEquals(JSON_REQUIRED, error.type());
         assertEquals("$.metaData: is missing but it is required", error.message());
         error = errors.get(2);
-        assertEquals(ErrorType.JSON_ADDITIONAL_PROPERTIES, error.errorType());
+        assertEquals(JSON_ADDITIONAL_PROPERTIES, error.type());
         assertEquals("$.disney: is not defined in the schema and the schema does not allow additional properties", error.message());
     }
 
     @Test
     public void testRareDiseaseBethlemahmValidPhenopacket() throws Exception {
-        JsonSchemaValidator validator = FACTORY.getValidatorForType(ValidatorInfo.rareDiseaseValidation()).get();
+        PhenopacketValidator validator = rareHpoValidatorMap.values().stream()
+                .findFirst()
+                .get();
 
         Phenopacket bethlehamMyopathy = rareDiseasePhenopacket.getPhenopacket();
         String json =  JsonFormat.printer().print(bethlehamMyopathy);
@@ -84,19 +93,19 @@ public class JsonSchemaValidatorTest {
     }
 
     @Test
-    @Disabled // TODO - we should rework the testing strategy to invalidate a valid phenopacket and check that it raises the expected error
     public void testRareDiseaseBethlemahmInvalidValidPhenopacket() throws IOException {
-        JsonSchemaValidator validator = FACTORY.getValidatorForType(ValidatorInfo.rareDiseaseValidation()).get();
-
+        PhenopacketValidator validator = rareHpoValidatorMap.values().stream()
+                .findFirst()
+                .get();
         File invalidMyopathyPhenopacket = fileFromClasspath("json/bethlehamMyopathyInvalidExample.json");
         List<? extends ValidationItem> errors = validator.validate(invalidMyopathyPhenopacket);
-//        for (ValidationError ve : errors) {
-//            System.out.println(ve.getMessage());
-//        }
+        for (ValidationItem ve : errors) {
+            System.out.println(ve.message());
+        }
         assertEquals(1, errors.size());
         ValidationItem error = errors.get(0);
-        assertEquals(ErrorType.JSON_ADDITIONAL_PROPERTIES, error.errorType());
-        assertEquals("$.phenotypicFeaturesMALFORMED: is not defined in the schema and the schema does not allow additional properties", error.message());
+        assertEquals(JSON_REQUIRED, error.type());
+        assertEquals("$.phenotypicFeatures: is missing but it is required", error.message());
     }
 
 

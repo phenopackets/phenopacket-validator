@@ -2,14 +2,11 @@ package org.phenopackets.validator.jsonschema;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
-import org.phenopackets.validator.core.PhenopacketValidator;
-import org.phenopackets.validator.core.ValidatorInfo;
+import org.phenopackets.validator.core.*;
 import org.phenopackets.validator.core.except.PhenopacketValidatorRuntimeException;
-import org.phenopackets.validator.core.ValidationItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +32,11 @@ public class JsonSchemaValidator implements PhenopacketValidator {
     private final ValidatorInfo validatorInfo;
 
 
+    private JsonSchemaValidator(JsonSchema jsonSchema, ValidatorInfo validatorInfo) {
+        this.jsonSchema = jsonSchema;
+        this.validatorInfo = validatorInfo;
+    }
+
     /**
      * @param jsonSchema path to JSON schema specification file
      * @throws PhenopacketValidatorRuntimeException if <code>jsonSchema</code> is not a valid file or if the file is
@@ -57,9 +59,13 @@ public class JsonSchemaValidator implements PhenopacketValidator {
         return new JsonSchemaValidator(schemaFactory.getSchema(inputStream), validatorInfo);
     }
 
-    private JsonSchemaValidator(JsonSchema jsonSchema, ValidatorInfo validatorInfo) {
-        this.jsonSchema = jsonSchema;
-        this.validatorInfo = validatorInfo;
+    private static ValidationItemType stringToErrorType(String error) {
+        return switch (error) {
+            case "additionalProperties" -> JsonValidationItemTypes.JSON_ADDITIONAL_PROPERTIES;
+            case "required" -> JsonValidationItemTypes.JSON_REQUIRED;
+            case "type", "enum" -> JsonValidationItemTypes.JSON_TYPE;
+            default -> throw new PhenopacketValidatorRuntimeException("Did not recognize JSON error type: \"" + error + "\"");
+        };
     }
 
     @Override
@@ -78,15 +84,17 @@ public class JsonSchemaValidator implements PhenopacketValidator {
         try {
             JsonNode json = objectMapper.readTree(inputStream);
             jsonSchema.validate(json)
-                    .forEach(e -> errors.add(new JsonValidationError(validatorInfo, e)));
+                    .forEach(e -> errors.add(ValidationItem.of(validatorInfo, stringToErrorType(e.getType()), e.getMessage())));
 
             return errors;
-        } catch (IOException e) {
-            LOGGER.warn("Error while decoding JSON content: {}", e.getMessage(), e);
-            return List.of();
-        } catch (RuntimeException e) {
-            LOGGER.warn("Error while validating: {}", e.getMessage());
-            return List.of();
+        } catch (Exception e) {
+            if (e instanceof IOException) {
+                LOGGER.warn("Error while decoding JSON content: {}", e.getMessage(), e);
+            } else {
+                LOGGER.warn("Error while validating: {}", e.getMessage(), e);
+            }
+
+            return List.of(ValidationItem.of(validatorInfo, ValidationItemTypes.syntaxError(), e.getMessage()));
         }
     }
 
