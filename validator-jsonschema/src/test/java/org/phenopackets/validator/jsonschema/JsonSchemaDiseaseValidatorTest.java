@@ -4,6 +4,7 @@ package org.phenopackets.validator.jsonschema;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import org.junit.jupiter.api.Test;
+import org.phenopackets.phenotools.builder.builders.MetaDataBuilder;
 import org.phenopackets.schema.v2.Phenopacket;
 import org.phenopackets.schema.v2.core.Disease;
 import org.phenopackets.schema.v2.core.MetaData;
@@ -12,15 +13,16 @@ import org.phenopackets.schema.v2.core.TimeElement;
 import org.phenopackets.validator.core.PhenopacketValidator;
 import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
-import org.phenopackets.validator.testdatagen.PhenopacketUtil;
+import org.phenopackets.validator.testdatagen.TestBase;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.phenopackets.phenotools.builder.builders.OntologyClassBuilder.ontologyClass;
 import static org.phenopackets.validator.jsonschema.JsonValidationItemTypes.*;
-import static org.phenopackets.validator.testdatagen.PhenopacketUtil.*;
+import static org.phenopackets.validator.testdatagen.TestBase.*;
 
 /**
  * This class creates a simple phenopacket with a Disease object and creates some variations with
@@ -43,13 +45,11 @@ public class JsonSchemaDiseaseValidatorTest {
     }
 
     private static Phenopacket phenopacketWithDisease() {
-        Resource hpo = hpoResource("2021-08-02");
-        Resource mondo = mondoResource("2021-09-01");
-        MetaData meta = PhenopacketUtil.MetaDataBuilder.create("2021-07-01T19:32:35Z", "anonymous biocurator")
+        MetaData meta = MetaDataBuilder.create("2021-07-01T19:32:35Z", "anonymous biocurator")
                 .submittedBy("anonymous submitter")
-                .addResource(hpo)
-                .addResource(mondo)
-                .addExternalReference("PMID:20842687",
+                .hpWithVersion("2021-08-02")
+                .mondoWithVersion("2021-09-01")
+                .externalReference("PMID:20842687",
                         "Severe dystonic encephalopathy without hyperphenylalaninemia associated with an 18-bp deletion within the proximal GCH1 promoter")
                 .build();
         Disease chagasCardiomyopathy = mondoDisease();
