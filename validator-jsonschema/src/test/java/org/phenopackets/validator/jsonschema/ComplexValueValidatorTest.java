@@ -15,6 +15,7 @@ import org.phenopackets.validator.core.ValidatorInfo;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.phenopackets.phenotools.builder.builders.OntologyClassBuilder.ontologyClass;
 
@@ -74,9 +75,9 @@ public class ComplexValueValidatorTest {
         PhenopacketValidator validator = jsonValidatorMap.values().stream()
                 .findFirst()
                 .get();
-        // Alter the first measurement, which is a Value
+        // Alter the first measurement, which is a ComplexValue
         Measurement m1 = phenopacket.getMeasurements(0);
-        assertTrue(m1.hasValue());
+        assertTrue(m1.hasComplexValue());
         m1 = Measurement.newBuilder(m1).clearAssay().build();
         Phenopacket p1 = Phenopacket.newBuilder(phenopacket).setMeasurements(0, m1).build();
         String json =  JsonFormat.printer().print(p1);
@@ -84,6 +85,32 @@ public class ComplexValueValidatorTest {
         for (var e : errors) {
             System.out.println(e);
         }
+    }
+
+    /**
+     * Each measurement requires an ontology term for the assay
+     */
+    @Test
+    public void testComplexValueHasNoTypedValue() throws InvalidProtocolBufferException {
+        PhenopacketValidator validator = jsonValidatorMap.values().stream()
+                .findFirst()
+                .get();
+        // Alter the first measurement, which is a ComplexValue
+        Measurement m1 = phenopacket.getMeasurements(0);
+        assertTrue(m1.hasComplexValue());
+        ComplexValue cvale = m1.getComplexValue();
+        cvale = ComplexValue.newBuilder(cvale).clearTypedQuantities().build();
+        m1 = Measurement.newBuilder(m1).setComplexValue(cvale).build();
+        Phenopacket p1 = Phenopacket.newBuilder(phenopacket).setMeasurements(0, m1).build();
+        String json =  JsonFormat.printer().print(p1);
+        System.out.println(json);
+        List<? extends ValidationItem> errors = validator.validate(json);
+        for (var e : errors) {
+            System.out.println(e);
+        }
+        assertEquals(1, errors.size());
+        String expectedErrorMsg = "$.measurements[0].complexValue.typedquantities: is missing but it is required";
+        assertEquals(expectedErrorMsg, errors.get(0).message());
     }
 
 
