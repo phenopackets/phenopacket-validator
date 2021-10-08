@@ -4,6 +4,7 @@ package org.phenopackets.validator.jsonschema;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import org.junit.jupiter.api.Test;
+import org.phenopackets.phenotools.builder.builders.DiseaseBuilder;
 import org.phenopackets.phenotools.builder.builders.MetaDataBuilder;
 import org.phenopackets.schema.v2.Phenopacket;
 import org.phenopackets.schema.v2.core.Disease;
@@ -33,17 +34,6 @@ public class JsonSchemaDiseaseValidatorTest {
 
     private static final Map<ValidatorInfo, PhenopacketValidator> jsonValidatorMap = JsonSchemaValidators.genericValidator();
 
-    private static Disease mondoDisease() {
-        var chagas = ontologyClass("MONDO:0005491", "Chagas cardiomyopathy");
-        var nyha3 = ontologyClass("NCIT:C66907", "New York Heart Association Class III");
-        var childhood = TimeElement.newBuilder().setOntologyClass(CHILDHOOD_ONSET).build();
-        return Disease.newBuilder()
-                .setTerm(chagas)
-                .setOnset(childhood)
-                .addDiseaseStage(nyha3)
-                .build();
-    }
-
     private static Phenopacket phenopacketWithDisease() {
         MetaData meta = MetaDataBuilder.create("2021-07-01T19:32:35Z", "anonymous biocurator")
                 .submittedBy("anonymous submitter")
@@ -52,7 +42,12 @@ public class JsonSchemaDiseaseValidatorTest {
                 .externalReference("PMID:20842687",
                         "Severe dystonic encephalopathy without hyperphenylalaninemia associated with an 18-bp deletion within the proximal GCH1 promoter")
                 .build();
-        Disease chagasCardiomyopathy = mondoDisease();
+        var nyha3 = ontologyClass("NCIT:C66907", "New York Heart Association Class III");
+        var childhood = TimeElement.newBuilder().setOntologyClass(CHILDHOOD_ONSET).build();
+        var chagasCardiomyopathy = DiseaseBuilder.create("MONDO:0005491", "Chagas cardiomyopathy")
+                .diseaseStage(nyha3)
+                .onset(childhood)
+                .build();
         return Phenopacket.newBuilder()
                 .setId("A")
                 .addDiseases(chagasCardiomyopathy)
@@ -80,7 +75,6 @@ public class JsonSchemaDiseaseValidatorTest {
         // the Phenopacket is not valid if we remove the id
         Phenopacket p1 = Phenopacket.newBuilder(phenopacket).clearId().build();
         String json =  JsonFormat.printer().print(p1);
-        System.out.println(json);
         List<? extends ValidationItem> errors = validator.validate(json);
         for (var e: errors) {
             System.out.println(e);
@@ -89,6 +83,29 @@ public class JsonSchemaDiseaseValidatorTest {
         ValidationItem error = errors.get(0);
         assertEquals(JSON_REQUIRED, error.type());
         assertEquals("$.id: is missing but it is required", error.message());
+    }
+
+    @Test
+    public void testDiseaseLacksOntologyTerm() throws InvalidProtocolBufferException {
+        // Disease must have an ontology term
+        PhenopacketValidator validator = jsonValidatorMap.values().stream()
+                .findFirst()
+                .get();
+        // the phenopacket has a single Disease message
+        Disease disease = phenopacket.getDiseases(0);
+        // remove the Ontology Term from the disease
+        disease = Disease.newBuilder(disease).clearTerm().build();
+        // replace the original disease object with the new disease object
+        Phenopacket p1 = Phenopacket.newBuilder(phenopacket)
+                .setDiseases(0, disease).build();
+        String json =  JsonFormat.printer().print(p1);
+        //System.out.println(json);
+        List<? extends ValidationItem> errors = validator.validate(json);
+        assertEquals(1, errors.size());
+        ValidationItem error = errors.get(0);
+        assertEquals(JSON_REQUIRED, error.type());
+        // this error means that the first disease lacks a term
+        assertEquals("$.diseases[0].term: is missing but it is required", error.message());
     }
 
 

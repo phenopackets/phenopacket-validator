@@ -491,7 +491,9 @@
         "laterality": {
           "$ref": "#/definitions/ontologyClass"
         }
-      }
+      },
+      "required": ["term"],
+      "additionalProperties": false
     },
     "interpretation": {
       "type": "object",
