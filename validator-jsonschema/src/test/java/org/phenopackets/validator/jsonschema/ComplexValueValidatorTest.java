@@ -17,7 +17,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.phenopackets.phenotools.builder.builders.OntologyClassBuilder.ontologyClass;
-import static org.phenopackets.validator.testdatagen.TestBase.CHILDHOOD_ONSET;
 
 /**
  * Test a few errors in the Value and ComplexValue messages
@@ -33,12 +32,6 @@ public class ComplexValueValidatorTest {
                 .mondoWithVersion("2021-09-01")
                 .build();
         // Simple value for blood platelets
-        OntologyClass cellsPerMl = ontologyClass("UO:0000316", "cells per microliter");
-        ReferenceRange rrange = ReferenceRangeCreator.create(cellsPerMl, 150_000, 450_000);
-        Quantity quantity = QuantityBuilder.create(cellsPerMl,24000)
-                .referenceRange(rrange)
-                .build();
-        Value value = ValueBuilder.create(quantity).build();
         // Complex value for blood pressure
         OntologyClass systolic = ontologyClass("NCIT:C25298", "Systolic Blood Pressure");
         OntologyClass diastolic = ontologyClass("NCIT:C25299", "Diastolic Blood Pressure");
@@ -47,12 +40,9 @@ public class ComplexValueValidatorTest {
                 .typedQuantity(systolic, QuantityBuilder.create(mmHg, 120).build())
                 .typedQuantity(diastolic, QuantityBuilder.create(mmHg, 70).build())
                 .build();
-        OntologyClass plateletAssay = ontologyClass( "LOINC:26515-7", "Platelets [#/volume] in Blood");
         OntologyClass bpAssay = ontologyClass("CMO:0000003", "blood pressure measurement");
-        Measurement plateletM = MeasurementBuilder.value(plateletAssay, value).build();
         Measurement bpM = MeasurementBuilder.complexValue(bpAssay, complexValue).build();
         return PhenopacketBuilder.create("id:A", meta)
-                .measurement(plateletM)
                 .measurement(bpM)
                 .build();
     }
