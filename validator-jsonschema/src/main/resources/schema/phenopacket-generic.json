@@ -314,6 +314,18 @@
       "type": "null"
     },
     "measurement": {
+      "type": "object",
+      "properties": {
+        "description": "string",
+        "assay": { "$ref": "#/definitions/ontologyClass" },
+        "value": {"$ref": "#/definitions/value" },
+         "complexValue":  { "$ref": "#/definitions/complexValue" },
+        "timeObserved":  { "$ref": "#/definitions/timeElement"},
+        "procedure":  { "$ref": "#/definitions/procedure"}
+      },
+      "required": ["assay"],
+      "additionalProperties": false,
+      "oneOf": [ { "required": [ "value" ]}, { "required": [ "complexValue" ]}]
     },
     "age": {
       "type": "object",

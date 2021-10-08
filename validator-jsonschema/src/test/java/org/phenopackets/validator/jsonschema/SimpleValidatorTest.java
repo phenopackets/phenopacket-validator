@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.phenopackets.validator.jsonschema.JsonValidationItemTypes.JSON_ADDITIONAL_PROPERTIES;
 import static org.phenopackets.validator.jsonschema.JsonValidationItemTypes.JSON_REQUIRED;
 
-public class JsonSchemaValidatorTest {
+public class SimpleValidatorTest {
 
     private static final Map<ValidatorInfo, PhenopacketValidator> genericValidatorMap = JsonSchemaValidators.genericValidator();
     private static final Map<ValidatorInfo, PhenopacketValidator> rareHpoValidatorMap = JsonSchemaValidators.rareHpoValidator();
@@ -88,7 +88,6 @@ public class JsonSchemaValidatorTest {
         Phenopacket bethlehamMyopathy = rareDiseasePhenopacket.getPhenopacket();
         String json =  JsonFormat.printer().print(bethlehamMyopathy);
         List<? extends ValidationItem> errors = validator.validate(json);
-
         assertTrue(errors.isEmpty());
     }
 

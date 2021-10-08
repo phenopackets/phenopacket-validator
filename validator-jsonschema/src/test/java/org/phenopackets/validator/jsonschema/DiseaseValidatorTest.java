@@ -30,7 +30,7 @@ import static org.phenopackets.validator.testdatagen.TestBase.*;
  * validation errors.
  * @author Peter N Robinson
  */
-public class JsonSchemaDiseaseValidatorTest {
+public class DiseaseValidatorTest {
 
     private static final Map<ValidatorInfo, PhenopacketValidator> jsonValidatorMap = JsonSchemaValidators.genericValidator();
 
