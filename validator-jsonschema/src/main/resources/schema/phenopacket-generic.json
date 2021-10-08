@@ -301,17 +301,35 @@
       "additionalProperties": false
     },
     "value": {
-      "oneOf": [
-        {
-          "$ref": "#/definitions/ontologyClass"
-        },
-        {
+      "type": "object",
+      "properties": {
+        "quantity":  {
           "$ref": "#/definitions/quantity"
+        },
+        "ontologyClass": {
+          "$ref": "#/definitions/ontologyClass"
         }
+      },
+      "additionalProperties": false,
+      "oneOf": [ { "required": [ "quantity" ]},
+        { "required": [ "ontologyClass" ]}
       ]
     },
+    "typedQuantity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/ontologyClass"
+        },
+        "quantity": {
+          "$ref": "#/definitions/quantity"
+        }
+      },
+      "required": ["type", "quantity"],
+      "additionalProperties": false
+    },
     "complexValue": {
-      "type": "null"
+      "type": "object"
     },
     "measurement": {
       "type": "object",
@@ -319,7 +337,7 @@
         "description": "string",
         "assay": { "$ref": "#/definitions/ontologyClass" },
         "value": {"$ref": "#/definitions/value" },
-         "complexValue":  { "$ref": "#/definitions/complexValue" },
+        "complexValue":  { "$ref": "#/definitions/complexValue" },
         "timeObserved":  { "$ref": "#/definitions/timeElement"},
         "procedure":  { "$ref": "#/definitions/procedure"}
       },
