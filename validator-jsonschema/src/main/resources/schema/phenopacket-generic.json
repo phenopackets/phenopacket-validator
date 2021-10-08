@@ -329,7 +329,19 @@
       "additionalProperties": false
     },
     "complexValue": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "typedquantities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typedQuantity"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": ["typedquantities"],
+      "additionalProperties": false
     },
     "measurement": {
       "type": "object",
