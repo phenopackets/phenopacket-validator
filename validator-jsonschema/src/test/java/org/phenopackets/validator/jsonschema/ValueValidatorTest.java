@@ -7,12 +7,9 @@ import org.phenopackets.phenotools.builder.PhenopacketBuilder;
 import org.phenopackets.phenotools.builder.builders.*;
 import org.phenopackets.schema.v2.Phenopacket;
 import org.phenopackets.schema.v2.core.*;
-import org.phenopackets.validator.core.PhenopacketValidator;
 import org.phenopackets.validator.core.ValidationItem;
-import org.phenopackets.validator.core.ValidatorInfo;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.phenopackets.phenotools.builder.builders.OntologyClassBuilder.ontologyClass;
@@ -22,8 +19,7 @@ import static org.phenopackets.phenotools.builder.builders.OntologyClassBuilder.
  * Test a few errors in the Value messages
  *  @author Peter N Robinson
  */
-public class ValueValidatorTest {
-    private static final Map<ValidatorInfo, PhenopacketValidator> jsonValidatorMap = JsonSchemaValidators.genericValidator();
+public class ValueValidatorTest extends JsonSchemaValidatorTestBase {
 
     private static Phenopacket phenopacketWithValueAndComplexValue() {
         MetaData meta = MetaDataBuilder.create("2021-07-01T19:32:35Z", "anonymous biocurator")
@@ -52,9 +48,6 @@ public class ValueValidatorTest {
      */
     @Test
     public void validatePhenopacket() throws InvalidProtocolBufferException {
-        PhenopacketValidator validator = jsonValidatorMap.values().stream()
-                .findFirst()
-                .get();
         String json =  JsonFormat.printer().print(phenopacket);
         //System.out.println(json);
         List<? extends ValidationItem> errors = validator.validate(json);
@@ -74,9 +67,6 @@ public class ValueValidatorTest {
      */
     @Test
     public void testMissingOntologyTerm() throws InvalidProtocolBufferException {
-        PhenopacketValidator validator = jsonValidatorMap.values().stream()
-                .findFirst()
-                .get();
         Measurement m1 = Phenopacket.newBuilder(phenopacket).getMeasurements(0);
         m1 = Measurement.newBuilder(m1).clearValue().build();
         Phenopacket p1 = Phenopacket.newBuilder(phenopacket).setMeasurements(0, m1).build();
@@ -94,9 +84,6 @@ public class ValueValidatorTest {
 
     @Test
     public void referenceRangeMissingLowValue() throws InvalidProtocolBufferException {
-        PhenopacketValidator validator = jsonValidatorMap.values().stream()
-                .findFirst()
-                .get();
         Measurement m1 = Phenopacket.newBuilder(phenopacket).getMeasurements(0);
         Value v1 = m1.getValue();
         ReferenceRange rrange = v1.getQuantity().getReferenceRange();
@@ -115,18 +102,11 @@ public class ValueValidatorTest {
 
     @Test
     public void measurementMissingAssay() throws InvalidProtocolBufferException {
-        PhenopacketValidator validator = jsonValidatorMap.values().stream()
-                .findFirst()
-                .get();
         Measurement m1 = Phenopacket.newBuilder(phenopacket).getMeasurements(0);
         m1 = Measurement.newBuilder(m1).clearAssay().build();
         Phenopacket p1 = Phenopacket.newBuilder(phenopacket).setMeasurements(0, m1).build();
         String json =  JsonFormat.printer().print(p1);
-        //System.out.println(json);
         List<? extends ValidationItem> errors = validator.validate(json);
-//        for (var e : errors) {
-//            System.out.println(e.message());
-//        }
         assertEquals(1, errors.size());
         String expectedErrorMsg = "$.measurements[0].assay: is missing but it is required";
         assertEquals(expectedErrorMsg, errors.get(0).message());

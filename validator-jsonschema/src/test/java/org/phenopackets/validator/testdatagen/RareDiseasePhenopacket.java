@@ -9,9 +9,8 @@ import org.phenopackets.schema.v2.Phenopacket;
 import org.phenopackets.schema.v2.core.File;
 import org.phenopackets.schema.v2.core.Individual;
 import org.phenopackets.schema.v2.core.MetaData;
-import org.phenopackets.schema.v2.core.Resource;
 
-public class RareDiseasePhenopacket extends TestBase{
+public class RareDiseasePhenopacket extends DatagenBase {
 
 
     private final Phenopacket phenopacket;

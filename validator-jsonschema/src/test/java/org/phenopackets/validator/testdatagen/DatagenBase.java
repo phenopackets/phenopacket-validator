@@ -7,7 +7,7 @@ import org.phenopackets.schema.v2.core.OntologyClass;
 import static org.phenopackets.phenotools.builder.builders.OntologyClassBuilder.ontologyClass;
 
 
-public class TestBase {
+public class DatagenBase {
     public static final String SCHEMA_VERSION = "2.0";
     public static final OntologyClass CONGENITAL_ONSET = ontologyClass("HP:0003577", "Congenital onset");
     public static final OntologyClass CHILDHOOD_ONSET = ontologyClass("HP:0011463", "Childhood onset");

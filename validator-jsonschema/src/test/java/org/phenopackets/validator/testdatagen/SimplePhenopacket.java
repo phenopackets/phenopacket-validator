@@ -9,7 +9,7 @@ import org.phenopackets.schema.v2.core.MetaData;
 /**
  * Build the simplest possible phenopacket for validation
  */
-public class SimplePhenopacket extends TestBase {
+public class SimplePhenopacket extends DatagenBase {
 
     private final Phenopacket phenopacket;
 
