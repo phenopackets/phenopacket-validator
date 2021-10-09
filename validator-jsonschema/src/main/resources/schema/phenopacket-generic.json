@@ -184,7 +184,9 @@
         "reference": {
           "$ref": "#/definitions/externalReference"
         }
-      }
+      },
+      "required": ["evidenceCode"],
+      "additionalProperties": false
     },
     "timeElement": {
       "type": "object",
@@ -331,7 +333,7 @@
     "complexValue": {
       "type": "object",
       "properties": {
-        "typedquantities": {
+        "typedQuantities": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/typedQuantity"
@@ -340,7 +342,7 @@
           "uniqueItems": true
         }
       },
-      "required": ["typedquantities"],
+      "required": ["typedQuantities"],
       "additionalProperties": false
     },
     "measurement": {
