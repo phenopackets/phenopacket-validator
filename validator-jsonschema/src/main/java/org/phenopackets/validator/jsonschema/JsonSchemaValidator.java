@@ -79,10 +79,10 @@ public class JsonSchemaValidator implements PhenopacketValidator {
      * @return List of {@link ValidationItem} objects (empty list if there were no errors)
      */
     @Override
-    public List<ValidationItem> validate(InputStream inputStream) {
+    public List<ValidationItem> validate(String jsonString) {
         List<ValidationItem> errors = new ArrayList<>();
         try {
-            JsonNode json = objectMapper.readTree(inputStream);
+            JsonNode json = objectMapper.readTree(jsonString);
             jsonSchema.validate(json)
                     .forEach(e -> errors.add(ValidationItem.of(validatorInfo, stringToErrorType(e.getType()), e.getMessage())));
 

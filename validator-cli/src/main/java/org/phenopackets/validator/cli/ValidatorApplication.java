@@ -11,6 +11,7 @@ import org.phenopackets.validator.core.ValidatorInfo;
 import org.phenopackets.validator.core.except.PhenopacketValidatorRuntimeException;
 import org.phenopackets.validator.jsonschema.JsonSchemaValidators;
 import org.phenopackets.validator.jsonschema.JsonSchemaValidator;
+import org.phenopackets.validator.ontology.HpoValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
