@@ -45,7 +45,7 @@ public class ValidationTsvVisualizer {
             writer.write(String.join("\t",result.getFields()) + "\n");
         }
         for (var vinfo : this.errorFreeValidations) {
-            writer.write(String.join("\t",List.of(vinfo.validatorName().toString(), "no errors", vinfo.validatorId().toString())) + "\n");
+            writer.write(String.join("\t",List.of(vinfo.validatorName(), "no errors", vinfo.validatorId())) + "\n");
         }
     }
 

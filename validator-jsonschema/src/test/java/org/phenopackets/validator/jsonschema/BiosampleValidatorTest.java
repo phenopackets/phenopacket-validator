@@ -21,15 +21,15 @@ public class BiosampleValidatorTest extends JsonSchemaValidatorTestBase {
     private static final String PHENOPACKET_ID = "arbitrary.id";
     private static final String PROBAND_ID = "proband A";
     private static final OntologyClass BIOPSY = ontologyClass("NCIT:C15189", "Biopsy");
-    private static MetaData metadata = MetaDataBuilder.create("2021-05-14T10:35:00Z", "anonymous biocurator")
-            .ncitWithVersion("21.05d")
-            .efoWithVersion("3.34.0")
-            .uberonWithVersion("2021-07-27")
-            .ncbiTaxonWithVersion(" 2021-06-10")
+    private static final MetaData metadata = MetaDataBuilder.create("2021-05-14T10:35:00Z", "anonymous biocurator")
+            .resource(Resources.ncitVersion("21.05d"))
+            .resource(Resources.efoVersion("3.34.0"))
+            .resource(Resources.uberonVersion("2021-07-27"))
+            .resource(Resources.ncbiTaxonVersion("2021-06-10"))
             .build();
     private static final Biosample lymphNodeBiopsy = BiosampleBuilder.create("biosample 2")
             .individualId(PROBAND_ID)
-            .timeOfCollection(TimeElementBuilder.create().age("P48Y3M").build())
+            .timeOfCollection(TimeElements.age("P48Y3M"))
             .sampledTissue(ontologyClass("NCIT:C139196", "Esophageal Lymph Node"))
             .tumorProgression(ontologyClass("NCIT:C84509", "Primary Malignant Neoplasm"))
             .histologicalDiagnosis(ontologyClass("NCIT:C4024", "Esophageal Squamous Cell Carcinoma"))
@@ -39,7 +39,7 @@ public class BiosampleValidatorTest extends JsonSchemaValidatorTestBase {
 
     private static final Biosample  lungBiopsy = BiosampleBuilder.create("biosample 3")
             .individualId(PROBAND_ID)
-            .timeOfCollection(TimeElementBuilder.create().age("P50Y7M").build())
+            .timeOfCollection(TimeElements.age("P50Y7M"))
             .sampledTissue(ontologyClass("NCIT:C12468", "Lung"))
             .tumorProgression(ontologyClass("NCIT:C3261", "Metastatic Neoplasm"))
             .procedure(ProcedureBuilder.create(BIOPSY).build())
@@ -65,7 +65,7 @@ public class BiosampleValidatorTest extends JsonSchemaValidatorTestBase {
      */
     @Test
     public void testBiosampleLacksId() throws InvalidProtocolBufferException {
-        assertTrue(phenopacket.getBiosamplesCount() == 1);
+        assertEquals(1, phenopacket.getBiosamplesCount());
         Biosample biosample = phenopacket.getBiosamples(0);
         biosample = Biosample.newBuilder(biosample).clearId().build();
         Phenopacket p1 = Phenopacket.newBuilder(phenopacket).setBiosamples(0, biosample).build();

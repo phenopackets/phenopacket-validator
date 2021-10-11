@@ -24,8 +24,8 @@ public class ValueValidatorTest extends JsonSchemaValidatorTestBase {
     private static Phenopacket phenopacketWithValueAndComplexValue() {
         MetaData meta = MetaDataBuilder.create("2021-07-01T19:32:35Z", "anonymous biocurator")
                 .submittedBy("anonymous submitter")
-                .hpWithVersion("2021-08-02")
-                .mondoWithVersion("2021-09-01")
+                .resource(Resources.hpoVersion("2021-08-02"))
+                .resource(Resources.mondoVersion("2021-09-01"))
                 .build();
         // Simple value for blood platelets
         OntologyClass cellsPerMl = ontologyClass("UO:0000316", "cells per microliter");
