@@ -1,10 +1,7 @@
 package org.phenopackets.validator.testdatagen;
 
 import org.phenopackets.phenotools.builder.PhenopacketBuilder;
-import org.phenopackets.phenotools.builder.builders.FileBuilder;
-import org.phenopackets.phenotools.builder.builders.IndividualBuilder;
-import org.phenopackets.phenotools.builder.builders.MetaDataBuilder;
-import org.phenopackets.phenotools.builder.builders.PhenotypicFeatureBuilder;
+import org.phenopackets.phenotools.builder.builders.*;
 import org.phenopackets.schema.v2.Phenopacket;
 import org.phenopackets.schema.v2.core.File;
 import org.phenopackets.schema.v2.core.Individual;
@@ -34,8 +31,8 @@ public class RareDiseasePhenopacket extends DatagenBase {
 
         MetaData meta = MetaDataBuilder.create("2021-07-01T19:32:35Z", "anonymous biocurator")
                 .submittedBy("anonymous submitter")
-                .hpWithVersion("2021-08-02")
-                .mondoWithVersion("2021-09-01")
+                .resource(Resources.hpoVersion("2021-08-02"))
+                .resource(Resources.mondoVersion("2021-09-01"))
                 .externalReference("PMID:20842687",
                         "Severe dystonic encephalopathy without hyperphenylalaninemia associated with an 18-bp deletion within the proximal GCH1 promoter")
                 .build();
