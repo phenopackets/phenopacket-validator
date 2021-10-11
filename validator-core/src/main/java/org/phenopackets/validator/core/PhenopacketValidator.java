@@ -24,7 +24,8 @@ public interface PhenopacketValidator {
 
     default List<ValidationItem> validate(File phenopacket) throws IOException {
         try (InputStream inputStream = Files.newInputStream(phenopacket.toPath())) {
-            return validate(inputStream);
+            byte[] bytes = inputStream.readAllBytes();
+            return validate(bytes);
         }
     }
 
