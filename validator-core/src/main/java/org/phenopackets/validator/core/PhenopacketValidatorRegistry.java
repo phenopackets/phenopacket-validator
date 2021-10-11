@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public interface PhenopacketValidatorRegistry {
 
-    static PhenopacketValidatorRegistry of(Map<ValidatorInfo, ? extends PhenopacketValidator> validMap) {
+    static PhenopacketValidatorRegistry of(Map<ValidatorInfo, PhenopacketValidator> validMap) {
         return new DefaultValidatorRegistry(validMap);
     }
 

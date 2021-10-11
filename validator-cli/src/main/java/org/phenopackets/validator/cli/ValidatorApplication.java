@@ -10,8 +10,6 @@ import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
 import org.phenopackets.validator.jsonschema.JsonSchemaValidators;
 import org.phenopackets.validator.jsonschema.JsonSchemaValidator;
-import org.phenopackets.validator.ontology.HpoValidator;
-import org.phenopackets.validator.ontology.OntologyValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -65,7 +63,7 @@ public class ValidatorApplication implements Runnable {
             LOGGER.info("Adding configuration file at `{}`", vinfo);
         }
         Ontology hpoOntology = OntologyLoader.loadOntology(hpoJsonPath);
-        OntologyValidator hpoValidator = new HpoValidator(hpoOntology);
+        PhenopacketValidator hpoValidator = new HpoValidator(hpoOntology);
         validatorMap.put(hpoValidator.info(), hpoValidator);
         PhenopacketValidatorRegistry registry = PhenopacketValidatorRegistry.of(validatorMap);
 
