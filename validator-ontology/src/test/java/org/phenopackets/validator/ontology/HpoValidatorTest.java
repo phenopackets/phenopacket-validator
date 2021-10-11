@@ -29,11 +29,11 @@ public class HpoValidatorTest {
 
     public HpoValidator validator;
 
-    private static byte[] wrapInPhenopacketAndGetJsonBytes(List<PhenotypicFeature> phenotypicFeatures) throws InvalidProtocolBufferException {
+    private static String wrapInPhenopacketAndGetJsonString(List<PhenotypicFeature> phenotypicFeatures) throws InvalidProtocolBufferException {
         Phenopacket phenopacket = Phenopacket.newBuilder()
                 .addAllPhenotypicFeatures(phenotypicFeatures)
                 .build();
-        return JsonFormat.printer().print(phenopacket).getBytes(StandardCharsets.UTF_8);
+        return JsonFormat.printer().print(phenopacket);
     }
 
     private static PhenotypicFeature makePhenotypicFeature(String termId, boolean excluded) {
@@ -85,9 +85,9 @@ public class HpoValidatorTest {
             List<PhenotypicFeature> phenotypicFeatures = List.of(
                     makePhenotypicFeature("HP:0000002", false),
                     makePhenotypicFeature("HP:0000005", false));
-            byte[] bytes = wrapInPhenopacketAndGetJsonBytes(phenotypicFeatures);
+            String json = wrapInPhenopacketAndGetJsonString(phenotypicFeatures);
 
-            List<ValidationItem> items = validator.validate(new ByteArrayInputStream(bytes));
+            List<ValidationItem> items = validator.validate(json);
 
             assertThat(items, hasSize(0));
         }
@@ -99,10 +99,8 @@ public class HpoValidatorTest {
                     makePhenotypicFeature("HP:0000004", true),
                     makePhenotypicFeature("HP:0000005", true)
             );
-            byte[] bytes = wrapInPhenopacketAndGetJsonBytes(phenotypicFeatures);
-
-            List<ValidationItem> items = validator.validate(new ByteArrayInputStream(bytes));
-
+            String json = wrapInPhenopacketAndGetJsonString(phenotypicFeatures);
+            List<ValidationItem> items = validator.validate(json);
             assertThat(items, hasSize(0));
         }
 
@@ -114,10 +112,8 @@ public class HpoValidatorTest {
         @Test
         public void termIdIsAbsentFromOntology() throws Exception {
             List<PhenotypicFeature> phenotypicFeatures = List.of(makePhenotypicFeature("HP:9999999", false));
-            byte[] bytes = wrapInPhenopacketAndGetJsonBytes(phenotypicFeatures);
-
-            List<ValidationItem> items = validator.validate(new ByteArrayInputStream(bytes));
-
+            String json = wrapInPhenopacketAndGetJsonString(phenotypicFeatures);
+            List<ValidationItem> items = validator.validate(json);
             assertThat(items, hasSize(1));
             ValidationItem expected = ValidationItem.of(validator.info(), OntologyValidationItemTypes.ONTOLOGY_INVALID_ID, "Could not find term id: HP:9999999");
             assertThat(items.get(0), equalTo(expected));
@@ -126,13 +122,10 @@ public class HpoValidatorTest {
         @Test
         public void nonPrimaryTermIdIsUsed() throws Exception {
             List<PhenotypicFeature> phenotypicFeatures = List.of(makePhenotypicFeature("HP:9999999", false));
-            byte[] bytes = wrapInPhenopacketAndGetJsonBytes(phenotypicFeatures);
-
+            String json = wrapInPhenopacketAndGetJsonString(phenotypicFeatures);
             when(ontology.containsTerm(TermId.of("HP:9999999"))).thenReturn(true);
             when(ontology.getPrimaryTermId(TermId.of("HP:9999999"))).thenReturn(TermId.of("HP:0000001"));
-
-            List<ValidationItem> items = validator.validate(new ByteArrayInputStream(bytes));
-
+            List<ValidationItem> items = validator.validate(json);
             assertThat(items, hasSize(1));
             ValidationItem expected = ValidationItem.of(validator.info(),
                     OntologyValidationItemTypes.ONTOLOGY_TERM_WITH_ALTERNATE_ID,
@@ -145,10 +138,8 @@ public class HpoValidatorTest {
             List<PhenotypicFeature> phenotypicFeatures = List.of(
                     makePhenotypicFeature("HP:0000003", false),
                     makePhenotypicFeature("HP:0000004", false));
-            byte[] bytes = wrapInPhenopacketAndGetJsonBytes(phenotypicFeatures);
-
-
-            List<ValidationItem> items = validator.validate(new ByteArrayInputStream(bytes));
+            String json = wrapInPhenopacketAndGetJsonString(phenotypicFeatures);
+            List<ValidationItem> items = validator.validate(json);
 
             assertThat(items, hasSize(1));
             ValidationItem expected = ValidationItem.of(validator.info(),
@@ -162,10 +153,8 @@ public class HpoValidatorTest {
             List<PhenotypicFeature> phenotypicFeatures = List.of(
                     makePhenotypicFeature("HP:0000003", true),
                     makePhenotypicFeature("HP:0000004", false));
-            byte[] bytes = wrapInPhenopacketAndGetJsonBytes(phenotypicFeatures);
-
-
-            List<ValidationItem> items = validator.validate(new ByteArrayInputStream(bytes));
+            String json = wrapInPhenopacketAndGetJsonString(phenotypicFeatures);
+            List<ValidationItem> items = validator.validate(json);
 
             assertThat(items, hasSize(1));
             ValidationItem expected = ValidationItem.of(validator.info(),

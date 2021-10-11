@@ -18,7 +18,7 @@ public interface PhenopacketValidator {
 
     ValidatorInfo info();
 
-    List<ValidationItem> validate(InputStream inputStream);
+    List<ValidationItem> validate(String content); ;
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -29,8 +29,8 @@ public interface PhenopacketValidator {
         }
     }
 
-    default List<ValidationItem> validate(String content) {
-        return validate(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
+    default List<ValidationItem>  validate(byte[] bytes){
+        return validate(new String(bytes));
     }
 
 }

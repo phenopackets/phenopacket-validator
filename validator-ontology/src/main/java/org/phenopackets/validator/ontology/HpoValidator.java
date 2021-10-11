@@ -43,8 +43,7 @@ public class HpoValidator extends OntologyValidator {
         super(hpoOntology, ValidatorInfo.of(ONTOLOGY_VALIDATOR, "Human Phenotype Ontology"));
     }
 
-    private static Phenopacket readPhenopacket(InputStream inputStream) throws IOException {
-        String phenopacketJsonString = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+    private static Phenopacket readPhenopacket(String phenopacketJsonString) throws IOException {
         Phenopacket.Builder phenoPacketBuilder = Phenopacket.newBuilder();
         JsonFormat.parser().merge(phenopacketJsonString, phenoPacketBuilder);
         return phenoPacketBuilder.build();
@@ -56,10 +55,10 @@ public class HpoValidator extends OntologyValidator {
     }
 
     @Override
-    public List<ValidationItem> validate(InputStream inputStream) {
+    public List<ValidationItem> validate(String jsonString) {
         Phenopacket phenopacket;
         try {
-            phenopacket = readPhenopacket(inputStream);
+            phenopacket = readPhenopacket(jsonString);
         } catch (IOException e) {
             LOGGER.warn("Error while validating: {}", e.getMessage(), e);
             return List.of(ValidationItem.of(validatorInfo, ValidationItemTypes.syntaxError(), e.getMessage()));
