@@ -8,6 +8,7 @@ import org.phenopackets.validator.core.PhenopacketValidator;
 import org.phenopackets.validator.core.PhenopacketValidatorRegistry;
 import org.phenopackets.validator.core.ValidationItem;
 import org.phenopackets.validator.core.ValidatorInfo;
+import org.phenopackets.validator.core.except.PhenopacketValidatorRuntimeException;
 import org.phenopackets.validator.jsonschema.JsonSchemaValidators;
 import org.phenopackets.validator.jsonschema.JsonSchemaValidator;
 import org.phenopackets.validator.ontology.HpoValidator;
@@ -19,6 +20,7 @@ import picocli.CommandLine;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
+import java.io.IOException;
 
 
 @CommandLine.Command(name = "PhenopacketValidator", version = "0.1.0", mixinStandardHelpOptions = true)
@@ -35,7 +37,7 @@ public class ValidatorApplication implements Runnable {
     public File hpoJsonPath;
 
     @CommandLine.Option(names = {"-p", "--phenopacket"}, required = true, description = "Phenopacket file to be validated")
-    public String phenopacket;
+    public String phenopacketFilePath;
 
     @CommandLine.Option(names = {"-o", "--out"}, description = "name of output file (default ${DEFAULT_VALUE})")
     public String outfileName = "phenopacket-validation.tsv";
@@ -52,8 +54,8 @@ public class ValidatorApplication implements Runnable {
 
 
     @Override
-    public void run() {
-        File phenopacketFile = new File(phenopacket);
+    public void run()  {
+        File phenopacketFile = new File(phenopacketFilePath);
         LOGGER.info("Validating {} phenopacket", phenopacketFile);
         Map<ValidatorInfo, PhenopacketValidator> validatorMap = new HashMap<>(JsonSchemaValidators.genericValidator());
         for (File jsonSchema : jsonSchemaFiles) {
@@ -74,13 +76,14 @@ public class ValidatorApplication implements Runnable {
         LOGGER.info("--------------------------------------------------------------------------------");
         LOGGER.info("");
         ValidationTsvVisualizer resultVisualizer = new ValidationTsvVisualizer();
-        try (InputStream in = Files.newInputStream(phenopacketFile.toPath())) {
+        try {
+            String  phenopacketJson = Files.readString(phenopacketFile.toPath());
             Set<ValidatorInfo> validatorInfoSet = registry.getValidationTypeSet();
             for (var vinfo : validatorInfoSet) {
                 var opt = registry.getValidatorForType(vinfo);
                 if (opt.isPresent()) {
                     PhenopacketValidator validator = opt.get();
-                    List<ValidationItem> validationItems = validator.validate(phenopacketFile);
+                    List<ValidationItem> validationItems = validator.validate(phenopacketJson);
                     if (validationItems.isEmpty()) {
                         resultVisualizer.errorFree(vinfo);
                     } else {
