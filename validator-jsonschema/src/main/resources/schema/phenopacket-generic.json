@@ -184,7 +184,9 @@
         "reference": {
           "$ref": "#/definitions/externalReference"
         }
-      }
+      },
+      "required": ["evidenceCode"],
+      "additionalProperties": false
     },
     "timeElement": {
       "type": "object",
@@ -301,19 +303,61 @@
       "additionalProperties": false
     },
     "value": {
-      "oneOf": [
-        {
-          "$ref": "#/definitions/ontologyClass"
-        },
-        {
+      "type": "object",
+      "properties": {
+        "quantity":  {
           "$ref": "#/definitions/quantity"
+        },
+        "ontologyClass": {
+          "$ref": "#/definitions/ontologyClass"
         }
+      },
+      "additionalProperties": false,
+      "oneOf": [ { "required": [ "quantity" ]},
+        { "required": [ "ontologyClass" ]}
       ]
     },
+    "typedQuantity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/ontologyClass"
+        },
+        "quantity": {
+          "$ref": "#/definitions/quantity"
+        }
+      },
+      "required": ["type", "quantity"],
+      "additionalProperties": false
+    },
     "complexValue": {
-      "type": "null"
+      "type": "object",
+      "properties": {
+        "typedQuantities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/typedQuantity"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": ["typedQuantities"],
+      "additionalProperties": false
     },
     "measurement": {
+      "type": "object",
+      "properties": {
+        "description": "string",
+        "assay": { "$ref": "#/definitions/ontologyClass" },
+        "value": {"$ref": "#/definitions/value" },
+        "complexValue":  { "$ref": "#/definitions/complexValue" },
+        "timeObserved":  { "$ref": "#/definitions/timeElement"},
+        "procedure":  { "$ref": "#/definitions/procedure"}
+      },
+      "required": ["assay"],
+      "additionalProperties": false,
+      "oneOf": [ { "required": [ "value" ]}, { "required": [ "complexValue" ]}]
     },
     "age": {
       "type": "object",

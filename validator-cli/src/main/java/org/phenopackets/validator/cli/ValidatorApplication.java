@@ -53,12 +53,6 @@ public class ValidatorApplication implements Runnable {
 
     @Override
     public void run() {
-        List<ValidatorInfo> validationTypes = new LinkedList<>();
-        validationTypes.add(ValidatorInfo.generic()); // we run this by default
-        if (rareHpoConstraints) {
-            LOGGER.info("Validating with HPO rare-disease constraints");
-            validationTypes.add(ValidatorInfo.rareDiseaseValidation());
-        }
         File phenopacketFile = new File(phenopacket);
         LOGGER.info("Validating {} phenopacket", phenopacketFile);
         Map<ValidatorInfo, PhenopacketValidator> validatorMap = new HashMap<>(JsonSchemaValidators.genericValidator());
