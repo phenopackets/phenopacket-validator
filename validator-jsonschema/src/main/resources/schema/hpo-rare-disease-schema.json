@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema#",
+  "$id": "https://www.ga4gh.org/phenopackets",
+  "title": "HPO Rare Disease Phenopacket Schema",
+  "description": "HPO Rare Disease Schema for GGA4GH Phenopacket",
+  "type": "object",
+  "properties": {
+    "subject": {
+      "type": "object",
+      "description": "The subject element is required for a rare-disease Phenopacket",
+      "properties": {
+        "timeAtLastEncounter": {
+          "type": "object",
+          "description": "The time at last encounter is required for a rare-disease phenopacket"
+        }
+      },
+      "required": [ "timeAtLastEncounter"]
+    },
+    "phenotypicFeatures": {
+      "type": "array",
+      "items": [{
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^HP:\\([0-9]{7}$"
+          }
+        }
+      }
+      ]
+    }
+  },
+  "required": [
+    "subject", "phenotypicFeatures"
+  ]
+}
