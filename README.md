@@ -1,5 +1,7 @@
 [![Build Status](https://api.travis-ci.com/phenopackets/phenopacket-validator.svg?branch=master)](https://api.travis-ci.com/phenopackets/phenopacket-validator.svg?branch=master)
 
+**THIS REPOSITORY HAS BEEN ARCHIVED AND WILL SOON BE DELETED - EQUIVALENT FUNCTIONALITY CAN BE FOUND IN THE [PHENOPACKET-TOOLS](https://github.com/phenopackets/phenopacket-tools) REPOSITORY** 
+
 # Phenopacket Validator
 Library and tools to help validate phenopackets
 
